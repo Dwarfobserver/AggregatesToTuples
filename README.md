@@ -1,6 +1,7 @@
 
 # Aggregates to tuples
 
+[![Build Status](https://travis-ci.org/Dwarfobserver/AggregatesToTuples.svg?branch=master)](https://travis-ci.org/Dwarfobserver/AggregatesToTuples)
 
 This is a personal project in C++17 which enable to treat aggregate (or record) types as tuples.
 It has been inspired by this nice article : https://playfulprogramming.blogspot.ca/2016/12/serializing-structs-with-c17-structured.html
