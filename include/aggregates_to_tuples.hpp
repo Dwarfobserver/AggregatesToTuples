@@ -4,6 +4,8 @@
 #include <type_traits>
 #include <tuple>
 
+namespace att {
+
 namespace traits {
 
     /// Used to retrieve classes from an overload or a specialization.
@@ -485,3 +487,5 @@ template <class Aggregate>
 using tuple_ref_type_of = typename std::remove_reference_t<decltype(
     as_tuple(std::declval<Aggregate&>())
 )>;
+
+}

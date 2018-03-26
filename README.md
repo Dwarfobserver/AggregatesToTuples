@@ -19,7 +19,7 @@ struct person {
 std::ostringstream stream;
 
 person p{ "Alex", 24 };
-stream << as_tuple(p);
+stream << att::as_tuple(p);
 
 // stream.str() == "{ Alex 24 }"
 
@@ -47,3 +47,6 @@ In particular :
  - It is not precisely tested and serves more as a proof of concept
 
 Code to manipulate tuples is not in the scope of this project, but there is basic tuple manipulations in the exemples.
+
+Note : std::is_aggregate<T> is not used because it is not implemented in MSVC (and not Clang from what I saw), but it would
+avoid some types detection caveats and greatly reduce compile time.

@@ -36,7 +36,7 @@ TEST_CASE("printer") {
     std::ostringstream stream;
 
     person p{ "Alex", 24 };
-    stream << as_tuple(p);
+    stream << att::as_tuple(p);
 
     REQUIRE(stream.str() == "{ Alex 24 }");
 }
