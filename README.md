@@ -40,12 +40,12 @@ ctest
 This project in under construction and lacks features and tests.
 In particular :
 
+ - The struct max size is limited (it can be increased by copy-paste code)
  - It does not give any code to manipulate tuples
- - It uses std::is_aggregate<T>, which is only supported by GCC for now (I'm not sure for Clang)
  - It cannot change structures to tuples recursively (eg. struct couple { person p1, person, p2 };)
  - It does not support aggregates with native arrays (eg. T[N], use std::array<T, N> instead)
  - It is not precisely tested and serves more as a proof of concept
 
 Code to manipulate tuples is not in the scope of this project, but there is basic tuple manipulations in the exemples.
-The next steps will be to emulate std::is_aggregate<T>, to allow recursive tuples and to at least detect natives arrays
-by inspecting types or give user-friendly error.
+The next steps will be to allow recursive tuples and to at least detect natives arrays by inspecting types to give
+user-friendly error.

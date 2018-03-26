@@ -81,6 +81,23 @@ namespace traits {
     template <class = void>
     static constexpr const wildcard any{};
 
+    /// This wildcard cannot be converted to a specific type.
+    
+    template <class Ex>
+    struct wildcard_except {
+        template <class T, class = std::enable_if_t<
+            !std::is_same_v<std::decay_t<Ex>, std::decay_t<T>> && // Maybe lighten decay
+            !std::is_lvalue_reference_v<T>
+        >>
+        operator T&&() const;
+
+        template <class T, class = std::enable_if_t<
+            !std::is_same_v<std::decay_t<Ex>, std::decay_t<T>> &&
+            std::is_copy_constructible_v<T>
+        >>
+        operator T&() const;
+    };
+
 }
 
 
@@ -110,16 +127,61 @@ namespace traits {
     constexpr bool is_brace_constructible =
         detail::is_brace_constructible<void, T, make_types_tag<N, void>>::value;
 
+    /// Detects if a type is parenthesis-constructible from N elements.
+
+    namespace detail {
+        template <class SFINAE, class T, class...Args>
+        struct is_parenthesis_constructible {
+            static constexpr bool value = false;
+        };
+
+        template <class T, class...Args>
+        struct is_parenthesis_constructible<std::void_t<
+            decltype(T( any<Args>... ))
+        >, T, types_tag<Args...>> {
+            static constexpr bool value = true;
+        };
+    }
+
+    template <class T, unsigned N>
+    constexpr bool is_parenthesis_constructible =
+        detail::is_parenthesis_constructible<void, T, make_types_tag<N, void>>::value;
+
+    /// Detexts if a type is parenthesis-constructible from one element.
+    /// Discards copy and move constructors.
+        
+    namespace detail {
+        template <class SFINAE, class T>
+        struct is_one_arg_constructible {
+            static constexpr bool value = false;
+        };
+
+        template <class T>
+        struct is_one_arg_constructible<std::void_t<
+            decltype(T( std::declval<wildcard_except<T>>() ))
+        >, T> {
+            static constexpr bool value = true;
+        };
+    }
+
+    template <class T>
+    constexpr bool is_one_arg_constructible =
+        detail::is_one_arg_constructible<void, T>::value;
+
+
     /// Gives the arity of a type (the number of elements which construct him).
     /// If he isn't an aggregate type, returns -1.
     /// If the maximum arity is reached, stops the compilation.
 
     namespace detail {
-        template <class T, unsigned I>
+
+        template <class T, int I>
         constexpr int arity_of_rec() {
-            static_assert(I < max_arity, "");
-            if constexpr (!::traits::is_brace_constructible<T, I + 1>) {
-                return I;
+            if constexpr (traits::is_parenthesis_constructible<T, I>) {
+                return -1;
+            }
+            else if constexpr (!traits::is_brace_constructible<T, I>) {
+                return I - 1;
             }
             else {
                 return arity_of_rec<T, I + 1>();
@@ -128,18 +190,29 @@ namespace traits {
 
         template <class T>
         constexpr int arity_of() {
-            // MSVC do not implement std::is_aggregate<T>
-            if constexpr (!std::is_aggregate_v<T>) {
+            if constexpr (!traits::is_brace_constructible<T, 0> ||
+                traits::is_brace_constructible<T, traits::max_arity + 1>)
+            {
                 return -1;
             }
+            else if constexpr (traits::is_one_arg_constructible<T>) {
+                return -1;
+            }
+            else if constexpr (!traits::is_brace_constructible<T, 1>) {
+                return 0;
+            }
             else {
-                return arity_of_rec<T, 0>();
+                return arity_of_rec<T, 2>();
             }
         }
+
     }
 
     template <class T>
     constexpr int arity_of = detail::arity_of<T>();
+
+    template <class T>
+    constexpr bool is_aggregate = arity_of<T> != -1;
 
 }
 
@@ -385,7 +458,7 @@ namespace detail {
 /// as_tuple makes a tuple of references on the given aggregate.
 
 template <class Aggregate, class = std::enable_if_t<
-    std::is_aggregate_v<Aggregate>
+    traits::is_aggregate<Aggregate>
 >>
 auto as_tuple(Aggregate& aggregate) {
     constexpr int arity = traits::arity_of<Aggregate>;
@@ -395,12 +468,14 @@ auto as_tuple(Aggregate& aggregate) {
 /// to_tuple copy the given aggregate as a tuple.
 
 template <class Aggregate, class = std::enable_if_t<
-    std::is_aggregate_v<std::remove_reference_t<Aggregate>>
+    traits::is_aggregate<std::remove_reference_t<Aggregate>>
 >>
 auto to_tuple(Aggregate&& aggregate) {
     constexpr int arity = traits::arity_of<std::remove_reference_t<Aggregate>>;
     return detail::to_tuple(std::forward<Aggregate>(aggregate), traits::value_tag<arity>{});
 }
+
+/// Return types of to_tuple and as_tuple.
 
 template <class Aggregate>
 using tuple_type_of = typename std::remove_reference_t<decltype(
