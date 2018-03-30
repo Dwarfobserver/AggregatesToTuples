@@ -15,19 +15,25 @@ namespace {
     };
 }
 
-TEST_CASE("equality tests") {
+TEST_CASE("equality") {
     person warrior = { 1.88f, 32 };
     person support = { 1.74f, 47 };
 
-    CHECK( att::test_equality(warrior, warrior));
-    CHECK(!att::test_equality(warrior, support));
+    using namespace att::operators;
+
+    bool WeqW = warrior == warrior;
+    bool WneqS = warrior != support;
+    CHECK(WeqW);  // Can't check equality directly, because
+    CHECK(WneqS); // Catch internally expand the equality.
 
     team goblins   = { "goblins", warrior, support };
     team halflings = goblins;
 
-    CHECK(att::test_equality(goblins, halflings));
+    bool GeqH = goblins == halflings;
+    CHECK(GeqH);
     
     halflings.warrior.age += 1;
 
-    CHECK(!att::test_equality(goblins, halflings));
+    bool GneqH = goblins != halflings;
+    CHECK(GneqH);
 }

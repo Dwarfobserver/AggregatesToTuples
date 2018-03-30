@@ -25,9 +25,14 @@ namespace att::detail {
     template <class T, T...args>
     struct values_tag {};
 
+    /// Same for template classes.
+
+    template <template <class...> class T>
+    struct hightype_tag {};
+
     // Used to create a sequence of classes in a tag.
 
-    namespace detail {
+    namespace impl {
         template <int I, class...Ts>
         struct make_types_tag;
         template <int I, class T, class...Ts>
@@ -41,11 +46,11 @@ namespace att::detail {
     }
 
     template <unsigned N, class T>
-    using make_types_tag = typename detail::make_types_tag<N, T>::type;
+    using make_types_tag = typename impl::make_types_tag<N, T>::type;
 
     // Used to create a sequence of values in a tag.
 
-    namespace detail {
+    namespace impl {
         template <int I, class T, T...args>
         struct make_values_tag;
         template <int I, class T, T arg, T...args>
@@ -59,7 +64,7 @@ namespace att::detail {
     }
 
     template <unsigned N, class T, T arg>
-    using make_values_tag = typename detail::make_values_tag<N, T, arg>::type;
+    using make_values_tag = typename impl::make_values_tag<N, T, arg>::type;
 
     /// Used to represent any class.
 
@@ -99,7 +104,7 @@ namespace att::detail {
 
     /// Detect if an expression is valid with the given class template arguments.
 
-    namespace detail {
+    namespace impl {
         template <class SFINAE, template <class...> class Expr, class...Ts>
         struct is_detected {
             static constexpr bool value = false;
@@ -111,6 +116,6 @@ namespace att::detail {
     }
 
     template <template <class...> class Expr, class...Ts>
-    constexpr bool is_detected = detail::is_detected<void, Expr, Ts...>::value;
+    constexpr bool is_detected = impl::is_detected<void, Expr, Ts...>::value;
 
 }
