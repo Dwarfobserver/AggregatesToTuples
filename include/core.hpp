@@ -130,235 +130,235 @@ namespace att {
         /// Dispatched functions to make tuples based on the aggregate arity.
 
         template <class Aggregate, int Arity>
-        auto as_tuple(Aggregate& aggregate, value_tag<Arity>);
+        auto as_tuple(Aggregate& aggregate, value_tag<int, Arity>);
         template <class Aggregate, int Arity>
-        auto to_tuple(Aggregate&& aggregate, value_tag<Arity>);
+        auto to_tuple(Aggregate&& aggregate, value_tag<int, Arity>);
 
         template <class Aggregate>
-        auto as_tuple(Aggregate& aggregate, value_tag<0>) {
+        auto as_tuple(Aggregate& aggregate, value_tag<int, 0>) {
             return std::make_tuple();
         }
         template <class Aggregate>
-        auto to_tuple(Aggregate&& aggregate, value_tag<0>) {
+        auto to_tuple(Aggregate&& aggregate, value_tag<int, 0>) {
             return std::make_tuple();
         }
 
         template <class Aggregate>
-        auto as_tuple(Aggregate& aggregate, value_tag<1>) {
+        auto as_tuple(Aggregate& aggregate, value_tag<int, 1>) {
             auto& [v1] = aggregate;
             return std::forward_as_tuple(v1);
         }
         template <class Aggregate>
-        auto to_tuple(Aggregate&& aggregate, value_tag<1>) {
+        auto to_tuple(Aggregate&& aggregate, value_tag<int, 1>) {
             auto&& [v1] = aggregate;
             return std::make_tuple(v1);
         }
 
         template <class Aggregate>
-        auto as_tuple(Aggregate& aggregate, value_tag<2>) {
+        auto as_tuple(Aggregate& aggregate, value_tag<int, 2>) {
             auto& [v1, v2] = aggregate;
             return std::forward_as_tuple(v1, v2);
         }
         template <class Aggregate>
-        auto to_tuple(Aggregate&& aggregate, value_tag<2>) {
+        auto to_tuple(Aggregate&& aggregate, value_tag<int, 2>) {
             auto&& [v1, v2] = aggregate;
             return std::make_tuple(v1, v2);
         }
         
         template <class Aggregate>
-        auto as_tuple(Aggregate& aggregate, value_tag<3>) {
+        auto as_tuple(Aggregate& aggregate, value_tag<int, 3>) {
             auto& [v1, v2, v3] = aggregate;
             return std::forward_as_tuple(v1, v2, v3);
         }
         template <class Aggregate>
-        auto to_tuple(Aggregate&& aggregate, value_tag<3>) {
+        auto to_tuple(Aggregate&& aggregate, value_tag<int, 3>) {
             auto&& [v1, v2, v3] = aggregate;
             return std::make_tuple(v1, v2, v3);
         }
         
         template <class Aggregate>
-        auto as_tuple(Aggregate& aggregate, value_tag<4>) {
+        auto as_tuple(Aggregate& aggregate, value_tag<int, 4>) {
             auto& [v1, v2, v3, v4] = aggregate;
             return std::forward_as_tuple(v1, v2, v3, v4);
         }
         template <class Aggregate>
-        auto to_tuple(Aggregate&& aggregate, value_tag<4>) {
+        auto to_tuple(Aggregate&& aggregate, value_tag<int, 4>) {
             auto&& [v1, v2, v3, v4] = aggregate;
             return std::make_tuple(v1, v2, v3, v4);
         }
         
         template <class Aggregate>
-        auto as_tuple(Aggregate& aggregate, value_tag<5>) {
+        auto as_tuple(Aggregate& aggregate, value_tag<int, 5>) {
             auto& [v1, v2, v3, v4, v5] = aggregate;
             return std::forward_as_tuple(v1, v2, v3, v4, v5);
         }
         template <class Aggregate>
-        auto to_tuple(Aggregate&& aggregate, value_tag<5>) {
+        auto to_tuple(Aggregate&& aggregate, value_tag<int, 5>) {
             auto&& [v1, v2, v3, v4, v5] = aggregate;
             return std::make_tuple(v1, v2, v3, v4, v5);
         }
         
         template <class Aggregate>
-        auto as_tuple(Aggregate& aggregate, value_tag<6>) {
+        auto as_tuple(Aggregate& aggregate, value_tag<int, 6>) {
             auto& [v1, v2, v3, v4, v5, v6] = aggregate;
             return std::forward_as_tuple(v1, v2, v3, v4, v5, v6);
         }
         template <class Aggregate>
-        auto to_tuple(Aggregate&& aggregate, value_tag<6>) {
+        auto to_tuple(Aggregate&& aggregate, value_tag<int, 6>) {
             auto&& [v1, v2, v3, v4, v5, v6] = aggregate;
             return std::make_tuple(v1, v2, v3, v4, v5, v6);
         }
         
         template <class Aggregate>
-        auto as_tuple(Aggregate& aggregate, value_tag<7>) {
+        auto as_tuple(Aggregate& aggregate, value_tag<int, 7>) {
             auto& [v1, v2, v3, v4, v5, v6, v7] = aggregate;
             return std::forward_as_tuple(v1, v2, v3, v4, v5, v6, v7);
         }
         template <class Aggregate>
-        auto to_tuple(Aggregate&& aggregate, value_tag<7>) {
+        auto to_tuple(Aggregate&& aggregate, value_tag<int, 7>) {
             auto&& [v1, v2, v3, v4, v5, v6, v7] = aggregate;
             return std::make_tuple(v1, v2, v3, v4, v5, v6, v7);
         }
         
         template <class Aggregate>
-        auto as_tuple(Aggregate& aggregate, value_tag<8>) {
+        auto as_tuple(Aggregate& aggregate, value_tag<int, 8>) {
             auto& [v1, v2, v3, v4, v5, v6, v7, v8] = aggregate;
             return std::forward_as_tuple(v1, v2, v3, v4, v5, v6, v7, v8);
         }
         template <class Aggregate>
-        auto to_tuple(Aggregate&& aggregate, value_tag<8>) {
+        auto to_tuple(Aggregate&& aggregate, value_tag<int, 8>) {
             auto&& [v1, v2, v3, v4, v5, v6, v7, v8] = aggregate;
             return std::make_tuple(v1, v2, v3, v4, v5, v6, v7, v8);
         }
         
         template <class Aggregate>
-        auto as_tuple(Aggregate& aggregate, value_tag<9>) {
+        auto as_tuple(Aggregate& aggregate, value_tag<int, 9>) {
             auto& [v1, v2, v3, v4, v5, v6, v7, v8, v9] = aggregate;
             return std::forward_as_tuple(v1, v2, v3, v4, v5, v6, v7, v8, v9);
         }
         template <class Aggregate>
-        auto to_tuple(Aggregate&& aggregate, value_tag<9>) {
+        auto to_tuple(Aggregate&& aggregate, value_tag<int, 9>) {
             auto&& [v1, v2, v3, v4, v5, v6, v7, v8, v9] = aggregate;
             return std::make_tuple(v1, v2, v3, v4, v5, v6, v7, v8, v9);
         }
         
         template <class Aggregate>
-        auto as_tuple(Aggregate& aggregate, value_tag<10>) {
+        auto as_tuple(Aggregate& aggregate, value_tag<int, 10>) {
             auto& [v1, v2, v3, v4, v5, v6, v7, v8, v9, v10] = aggregate;
             return std::forward_as_tuple(v1, v2, v3, v4, v5, v6, v7, v8, v9, v10);
         }
         template <class Aggregate>
-        auto to_tuple(Aggregate&& aggregate, value_tag<10>) {
+        auto to_tuple(Aggregate&& aggregate, value_tag<int, 10>) {
             auto&& [v1, v2, v3, v4, v5, v6, v7, v8, v9, v10] = aggregate;
             return std::make_tuple(v1, v2, v3, v4, v5, v6, v7, v8, v9, v10);
         }
         
         template <class Aggregate>
-        auto as_tuple(Aggregate& aggregate, value_tag<11>) {
+        auto as_tuple(Aggregate& aggregate, value_tag<int, 11>) {
             auto& [v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11] = aggregate;
             return std::forward_as_tuple(v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11);
         }
         template <class Aggregate>
-        auto to_tuple(Aggregate&& aggregate, value_tag<11>) {
+        auto to_tuple(Aggregate&& aggregate, value_tag<int, 11>) {
             auto&& [v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11] = aggregate;
             return std::make_tuple(v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11);
         }
         
         template <class Aggregate>
-        auto as_tuple(Aggregate& aggregate, value_tag<12>) {
+        auto as_tuple(Aggregate& aggregate, value_tag<int, 12>) {
             auto& [v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12] = aggregate;
             return std::forward_as_tuple(v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12);
         }
         template <class Aggregate>
-        auto to_tuple(Aggregate&& aggregate, value_tag<12>) {
+        auto to_tuple(Aggregate&& aggregate, value_tag<int, 12>) {
             auto&& [v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12] = aggregate;
             return std::make_tuple(v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12);
         }
         
         template <class Aggregate>
-        auto as_tuple(Aggregate& aggregate, value_tag<13>) {
+        auto as_tuple(Aggregate& aggregate, value_tag<int, 13>) {
             auto& [v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13] = aggregate;
             return std::forward_as_tuple(v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13);
         }
         template <class Aggregate>
-        auto to_tuple(Aggregate&& aggregate, value_tag<13>) {
+        auto to_tuple(Aggregate&& aggregate, value_tag<int, 13>) {
             auto&& [v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13] = aggregate;
             return std::make_tuple(v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13);
         }
         
         template <class Aggregate>
-        auto as_tuple(Aggregate& aggregate, value_tag<14>) {
+        auto as_tuple(Aggregate& aggregate, value_tag<int, 14>) {
             auto& [v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14] = aggregate;
             return std::forward_as_tuple(v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14);
         }
         template <class Aggregate>
-        auto to_tuple(Aggregate&& aggregate, value_tag<14>) {
+        auto to_tuple(Aggregate&& aggregate, value_tag<int, 14>) {
             auto&& [v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14] = aggregate;
             return std::make_tuple(v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14);
         }
         
         template <class Aggregate>
-        auto as_tuple(Aggregate& aggregate, value_tag<15>) {
+        auto as_tuple(Aggregate& aggregate, value_tag<int, 15>) {
             auto& [v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15] = aggregate;
             return std::forward_as_tuple(v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15);
         }
         template <class Aggregate>
-        auto to_tuple(Aggregate&& aggregate, value_tag<15>) {
+        auto to_tuple(Aggregate&& aggregate, value_tag<int, 15>) {
             auto&& [v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15] = aggregate;
             return std::make_tuple(v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15);
         }
         
         template <class Aggregate>
-        auto as_tuple(Aggregate& aggregate, value_tag<16>) {
+        auto as_tuple(Aggregate& aggregate, value_tag<int, 16>) {
             auto& [v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16] = aggregate;
             return std::forward_as_tuple(v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16);
         }
         template <class Aggregate>
-        auto to_tuple(Aggregate&& aggregate, value_tag<16>) {
+        auto to_tuple(Aggregate&& aggregate, value_tag<int, 16>) {
             auto&& [v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16] = aggregate;
             return std::make_tuple(v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16);
         }
         
         template <class Aggregate>
-        auto as_tuple(Aggregate& aggregate, value_tag<17>) {
+        auto as_tuple(Aggregate& aggregate, value_tag<int, 17>) {
             auto& [v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17] = aggregate;
             return std::forward_as_tuple(v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17);
         }
         template <class Aggregate>
-        auto to_tuple(Aggregate&& aggregate, value_tag<17>) {
+        auto to_tuple(Aggregate&& aggregate, value_tag<int, 17>) {
             auto&& [v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17] = aggregate;
             return std::make_tuple(v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17);
         }
         
         template <class Aggregate>
-        auto as_tuple(Aggregate& aggregate, value_tag<18>) {
+        auto as_tuple(Aggregate& aggregate, value_tag<int, 18>) {
             auto& [v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18] = aggregate;
             return std::forward_as_tuple(v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18);
         }
         template <class Aggregate>
-        auto to_tuple(Aggregate&& aggregate, value_tag<18>) {
+        auto to_tuple(Aggregate&& aggregate, value_tag<int, 18>) {
             auto&& [v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18] = aggregate;
             return std::make_tuple(v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18);
         }
         
         template <class Aggregate>
-        auto as_tuple(Aggregate& aggregate, value_tag<19>) {
+        auto as_tuple(Aggregate& aggregate, value_tag<int, 19>) {
             auto& [v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18, v19] = aggregate;
             return std::forward_as_tuple(v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18, v19);
         }
         template <class Aggregate>
-        auto to_tuple(Aggregate&& aggregate, value_tag<19>) {
+        auto to_tuple(Aggregate&& aggregate, value_tag<int, 19>) {
             auto&& [v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18, v19] = aggregate;
             return std::make_tuple(v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18, v19);
         }
         
         template <class Aggregate>
-        auto as_tuple(Aggregate& aggregate, value_tag<20>) {
+        auto as_tuple(Aggregate& aggregate, value_tag<int, 20>) {
             auto& [v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18, v19, v20] = aggregate;
             return std::forward_as_tuple(v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18, v19, v20);
         }
         template <class Aggregate>
-        auto to_tuple(Aggregate&& aggregate, value_tag<20>) {
+        auto to_tuple(Aggregate&& aggregate, value_tag<int, 20>) {
             auto&& [v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18, v19, v20] = aggregate;
             return std::make_tuple(v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18, v19, v20);
         }
@@ -371,7 +371,7 @@ namespace att {
     >>
     auto as_tuple(Aggregate& aggregate) {
         constexpr int arity = arity_of<Aggregate>;
-        return detail::as_tuple(aggregate, detail::value_tag<arity>{});
+        return detail::as_tuple(aggregate, detail::value_tag<int, arity>{});
     }
 
     /// Copies the given aggregate as a tuple.
@@ -381,7 +381,7 @@ namespace att {
     >>
     auto to_tuple(Aggregate&& aggregate) {
         constexpr int arity = arity_of<std::remove_reference_t<Aggregate>>;
-        return detail::to_tuple(std::forward<Aggregate>(aggregate), detail::value_tag<arity>{});
+        return detail::to_tuple(std::forward<Aggregate>(aggregate), detail::value_tag<int, arity>{});
     }
 
     /// The return type of as_tuple.

@@ -30,14 +30,14 @@ namespace att {
         bool test_equality_tuple(
                 std::tuple<Ts...> const& lhs,
                 std::tuple<Ts...> const& rhs,
-                value_tag<I>)
+                value_tag<int, I>)
         {
             if constexpr (I == sizeof...(Ts)) {
                 return true;
             }
             else {
                 return test_equality(std::get<I>(lhs), std::get<I>(rhs)) &&
-                    test_equality_tuple(lhs, rhs, value_tag<I + 1>{});
+                    test_equality_tuple(lhs, rhs, value_tag<int, I + 1>{});
             }
         }
     }
@@ -53,7 +53,7 @@ namespace att {
             return detail::test_equality_tuple(
                 as_tuple(lhs),
                 as_tuple(rhs),
-                detail::value_tag<0>{});
+                detail::value_tag<int, 0>{});
         }
     }
 
