@@ -1,19 +1,19 @@
 
 #include "catch.hpp"
-#include <aggregates_to_tuples.hpp>
+#include <core.hpp>
 #include <sstream>
 
 template <class F, int I, class...Ts>
-void visit_tuple_rec(std::tuple<Ts...> const& t, F&& f, att::traits::value_tag<I>) {
+void visit_tuple_rec(std::tuple<Ts...> const& t, F&& f, att::detail::value_tag<I>) {
     if constexpr (I < sizeof...(Ts)) {
         f(std::get<I>(t));
-        visit_tuple_rec(t, f, att::traits::value_tag<I + 1>{});
+        visit_tuple_rec(t, f, att::detail::value_tag<I + 1>{});
     }
 }
 
 template <class F, class...Ts>
 void visit_tuple(std::tuple<Ts...> const& t, F&& f) {
-    visit_tuple_rec(t, f, att::traits::value_tag<0>{});
+    visit_tuple_rec(t, f, att::detail::value_tag<0>{});
 }
 
 template <class...Ts>
