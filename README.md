@@ -38,6 +38,8 @@ ctest
 
 ```
 
+The 'gluer' program creates the single header in 'single_include' from the headers in 'include'.
+
 This project in under construction and lacks features and tests.
 In particular :
 
