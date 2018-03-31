@@ -9,21 +9,21 @@ It has been inspired by this nice article : https://playfulprogramming.blogspot.
 Using tuples instead of aggregates can allow many functional programming algorithms and automatic
 properties, such as equality comparaison, serialization or hash.
 
-
-Little exemple of use (in tests/printer.cpp) :
+Little exemple of use :
 
 ```cpp
 
 struct person {
-    std::string name, int age;
+    std::string name;
+    int age;
 };
 
-std::ostringstream stream;
+using namespace att::operators;
 
-person p{ "Alex", 24 };
-stream << att::as_tuple(p);
+person alex  { "Alex", 24 };
+person alex2 { "Alex", 25 };
 
-// stream.str() == "{ Alex 24 }"
+bool lt = alex < alex2; // true
 
 ```
 
