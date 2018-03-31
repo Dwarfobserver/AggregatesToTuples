@@ -18,10 +18,13 @@ struct person {
     int age;
 };
 
-using namespace att::operators;
-
 person alex  { "Alex", 24 };
 person alex2 { "Alex", 25 };
+
+att::as_tuple_t<person> refs = att::as_tuple(alex); // std::tuple<std::string&, int&>
+att::to_tuple_t<person> tuple = att::to_tuple(alex); // std::tuple<std::string, int>
+
+using namespace att::operators;
 
 bool lt = alex < alex2; // true
 
