@@ -1,4 +1,6 @@
 
+/// Defines the core functions as_tuple and to_tuple.
+
 #pragma once
 
 #include <tools.hpp>

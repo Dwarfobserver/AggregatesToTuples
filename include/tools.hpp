@@ -1,4 +1,6 @@
 
+/// Defines common template helpers for the other headers.
+
 #pragma once
 
 #include <type_traits>

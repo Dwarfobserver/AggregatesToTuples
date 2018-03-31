@@ -6,8 +6,8 @@
 
 using namespace std::string_literals;
 
-std::vector<std::string> standard_headers = { "tuple", "type_traits" };
-std::vector<std::string> att_headers = { "tools", "core", "equality" };
+std::vector<std::string> standard_headers = { "tuple", "type_traits", "functional" };
+std::vector<std::string> att_headers = { "tools", "core", "comparisons", "hash" };
 
 std::string clean_file(std::string const& file) {
     std::ifstream tools{ INCLUDES_DIRECTORY + file + ".hpp" };
@@ -34,7 +34,7 @@ std::string clean_file(std::string const& file) {
 
 int main() {
     std::ofstream header{ SINGLE_INCLUDE_DIRECTORY + "aggregates_to_tuples.hpp"s };
-    header << "\n";
+    
     header << "\n/// ----- Aggregates to Tuples -----";
     header << "\n///";
     header << "\n/// Auto-generated header which glues :";

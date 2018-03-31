@@ -9,6 +9,7 @@ It has been inspired by this nice article : https://playfulprogramming.blogspot.
 Using tuples instead of aggregates can allow many functional programming algorithms and automatic
 properties, such as equality comparaison, serialization or hash.
 
+
 Little exemple of use (in tests/printer.cpp) :
 
 ```cpp
@@ -43,9 +44,12 @@ The 'gluer' program creates the single header in 'single_include' from the heade
 This project in under construction and lacks features and tests.
 In particular :
 
- - The aggregate max size is limited (it can be increased by copy-paste code)
+ - The aggregate max size is limited (it can be increased with copy-pasta)
  - It does not support aggregates with native arrays (eg. T[N], use std::array<T, N> instead)
  - It is not precisely tested and serves more as a proof of concept
+ - The single include created is not tested
 
 Note : std::is_aggregate<T> is not used because it is not implemented in MSVC (and not Clang from what I saw), but it would
 avoid some types detection caveats and greatly reduce compile time.
+
+

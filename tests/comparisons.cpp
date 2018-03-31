@@ -1,6 +1,6 @@
 
 #include "catch.hpp"
-#include <equality.hpp>
+#include <comparisons.hpp>
 #include <string>
 
 namespace {
@@ -36,4 +36,29 @@ TEST_CASE("equality") {
 
     bool GneqH = goblins != halflings;
     CHECK(GneqH);
+}
+
+TEST_CASE("less than") {
+    person warrior = { 1.88f, 32 };
+    person support = { 1.74f, 47 };
+
+    using namespace att::operators;
+
+    bool WltW = warrior < warrior;
+    bool SltW = support < warrior;
+    CHECK(!WltW);
+    CHECK(SltW);
+
+    team goblins   = { "goblins", warrior, support };
+    team halflings = goblins;
+
+    bool GltH = goblins < halflings;
+    bool HltG = halflings < goblins;
+    CHECK(!GltH);
+    CHECK(!HltG);
+    
+    halflings.warrior.age += 1;
+
+    GltH = goblins < halflings;
+    CHECK(GltH);
 }
