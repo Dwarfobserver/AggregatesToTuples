@@ -709,7 +709,7 @@ namespace att {
 
         template <int I, class...Ts>
         size_t hash_tuple(
-                std::tuple<Ts...>& tuple,
+                std::tuple<Ts...> const& tuple,
                 size_t seed,
                 hash_combiner_t combiner,
                 value_tag<int, I>)
