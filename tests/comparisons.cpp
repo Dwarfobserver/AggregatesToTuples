@@ -44,21 +44,23 @@ TEST_CASE("less than") {
 
     using namespace att::operators;
 
-    bool WltW = warrior < warrior;
+    bool WnltW = warrior >= warrior;
+    bool WltW = warrior > warrior;
     bool SltW = support < warrior;
+    CHECK(WnltW); // Same as for the equality
     CHECK(!WltW);
     CHECK(SltW);
 
     team goblins   = { "goblins", warrior, support };
     team halflings = goblins;
 
-    bool GltH = goblins < halflings;
+    bool HnltG = goblins <= halflings;
     bool HltG = halflings < goblins;
-    CHECK(!GltH);
+    CHECK(HnltG);
     CHECK(!HltG);
     
     halflings.warrior.age += 1;
 
-    GltH = goblins < halflings;
+    bool GltH = goblins < halflings;
     CHECK(GltH);
 }
