@@ -47,7 +47,8 @@ The 'generators' folder has two programs :
  - arity_functions which creates the 'arity_functions.inl' file.
  - single_include which glues together the files in 'include' into a unique header in 'single_include'.
 
-If you want to use them, they must be built with the cmake on your machine (with the commands above).
+If you want to use them, they must be built with the cmake on your machine. To do that, call cmake with
+-DMAKE_GENERATORS=1 : it will build the generators instead of the tests.
 
 This project in under construction and lacks features and tests.
 In particular :

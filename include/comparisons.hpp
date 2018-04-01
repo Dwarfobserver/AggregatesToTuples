@@ -152,23 +152,17 @@ namespace att {
     /// The other operators.
 
     namespace operators {
-        template <class T, class = std::enable_if_t<
-            detail::has_less<T> || is_aggregate<T>
-        >>
+        template <class T>
         bool operator<=(T const& lhs, T const& rhs) {
             return !(rhs < lhs);
         }
         
-        template <class T, class = std::enable_if_t<
-            detail::has_less<T> || is_aggregate<T>
-        >>
+        template <class T>
         bool operator>(T const& lhs, T const& rhs) {
             return rhs < lhs;
         }
         
-        template <class T, class = std::enable_if_t<
-            detail::has_less<T> || is_aggregate<T>
-        >>
+        template <class T>
         bool operator>=(T const& lhs, T const& rhs) {
             return !(lhs < rhs);
         }

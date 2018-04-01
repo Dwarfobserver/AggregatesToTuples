@@ -27,11 +27,6 @@ namespace att::detail {
     template <class T, T...args>
     struct values_tag {};
 
-    /// Same for template classes.
-
-    template <template <class...> class T>
-    struct hightype_tag {};
-
     // Used to create a sequence of classes in a tag.
 
     namespace impl {
