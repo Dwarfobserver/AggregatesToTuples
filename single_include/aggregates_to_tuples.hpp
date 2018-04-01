@@ -5,8 +5,10 @@
 ///   - tools.hpp
 ///   - arity_functions.inl
 ///   - core.hpp
+///   - loops.hpp
 ///   - comparisons.hpp
 ///   - hash.hpp
+///   - serialization.hpp
 
 #pragma once
 
@@ -36,6 +38,11 @@ namespace att::detail {
 
     template <class T, T...args>
     struct values_tag {};
+
+    /// Same for template types.
+    
+    template <template <class...> class T>
+    struct hightype_tag {};
 
     // Used to create a sequence of classes in a tag.
 
@@ -911,6 +918,104 @@ namespace att {
     )>;
 
 }
+/// Auto-merge of loops.hpp
+namespace att {
+
+    /// for_each which applies f recursively on a tuple.
+
+    namespace impl {
+        
+        template <class F, int I, class...Ts>
+        void for_each_tuple(std::tuple<Ts...>& tuple, F&& f, detail::value_tag<int , I>) {
+            if constexpr (I < sizeof...(Ts)) {
+                f(std::get<I>(tuple));
+                for_each_tuple(tuple, f, detail::value_tag<int, I + 1>{});
+            }
+        }
+    }
+
+    /// for_each for aggregates.
+
+    template <class T, class F, class = std::enable_if_t<
+        is_aggregate<T>
+    >>
+    void for_each(T&& aggregate, F&& f) {
+        auto refs = as_tuple(aggregate);
+        impl::for_each_tuple(refs, f, detail::value_tag<int, 0>{});
+    }
+
+    /// Helper type to make predicates easily.
+
+    namespace impl {
+        template <template <class> class Expression>
+        struct predicate {
+            template <class T>
+            struct type {
+                static constexpr bool value = detail::is_detected<Expression, T>;
+            };
+        };
+    }
+
+    /// Helper function to pass a predicate to a function, based to the validity of an expression.
+
+    template <template <class> class Expression>
+    constexpr auto make_predicate() {
+        using Predicate = impl::predicate<Expression>;
+        using Tag = detail::hightype_tag<Predicate::template type>;
+        return Tag {};
+    }
+
+    /// Helper function to pass a predicate to a function, which matches types to booleans (with Predicate<T>::value).
+
+    template <template <class> class Predicate>
+    constexpr auto pass_predicate() {
+        return detail::hightype_tag<Predicate>{};
+    }
+
+    /// Forward declaration of for_each_recursively.
+    /// Predicate matches types to booleans with Predicate<T>::value.
+    /// The boolean indicates if the function can be called on the type.
+
+    template <class T, class F, template <class> class Predicate>
+    void for_each_recursively(T& data, F&& f, detail::hightype_tag<Predicate>);
+    
+    namespace impl {
+
+        /// Looping on tuples.
+
+        template <class F, template <class> class Predicate, int I, class...Ts>
+        void for_each_tuple_recursively(
+                std::tuple<Ts...>& tuple,
+                F&& f,
+                detail::value_tag<int, I>,
+                detail::hightype_tag<Predicate> tag)
+        {
+            if constexpr (I < sizeof...(Ts)) {
+                for_each_recursively(std::get<I>(tuple), f, tag);
+                for_each_tuple_recursively(tuple, f, detail::value_tag<int, I + 1>{}, tag);
+            }
+        }
+
+    }
+
+    /// for_each_recursively implementation.
+
+    template <class T, class F, template <class> class Predicate>
+    void for_each_recursively(T& data, F&& f, detail::hightype_tag<Predicate> tag) {
+        if constexpr (Predicate<T>::value) {
+            f(data);
+        }
+        else if constexpr (is_aggregate<T>) {
+            auto refs = att::as_tuple(data);
+            impl::for_each_tuple_recursively(refs, f, detail::value_tag<int, 0>{}, tag);
+        }
+        else {
+            static_assert(Predicate<T>::value,
+            "T must be an aggregate, or the predicate for T must be true");
+        }
+    }
+
+}
 /// Auto-merge of comparisons.hpp
 namespace att {
 
@@ -1059,23 +1164,17 @@ namespace att {
     /// The other operators.
 
     namespace operators {
-        template <class T, class = std::enable_if_t<
-            detail::has_less<T> || is_aggregate<T>
-        >>
+        template <class T>
         bool operator<=(T const& lhs, T const& rhs) {
             return !(rhs < lhs);
         }
         
-        template <class T, class = std::enable_if_t<
-            detail::has_less<T> || is_aggregate<T>
-        >>
+        template <class T>
         bool operator>(T const& lhs, T const& rhs) {
             return rhs < lhs;
         }
         
-        template <class T, class = std::enable_if_t<
-            detail::has_less<T> || is_aggregate<T>
-        >>
+        template <class T>
         bool operator>=(T const& lhs, T const& rhs) {
             return !(lhs < rhs);
         }
@@ -1162,6 +1261,74 @@ namespace att {
     >>
     size_t hash(T const& val, hash_combiner_t combiner = default_hash_combiner) {
         return detail::hash_val(val, 0, combiner);
+    }
+
+}
+/// Auto-merge of serialization.hpp
+namespace att {
+
+    /// Operator '<<'
+
+    /// Defines expressions used to pass predicates to serialization functions.
+
+    namespace impl {
+        template <class LeftType>
+        struct serial_expr {
+            template <class T>
+            using serialize = decltype(
+                std::declval<LeftType&>() << std::declval<T const&>()
+            );
+            template <class T>
+            using deserialize = decltype(
+                std::declval<LeftType&>() >> std::declval<T&>()
+            );
+        };
+    }
+
+    // The operator implementation. Put aside to avoid operator resolution making an infinite recursion.
+
+    namespace impl {
+        template <class Serializer, class T>
+        void serialize(Serializer& serializer, T const& data) {
+            for_each_recursively(
+                data,
+                [&] (auto&& val) { serializer << val; },
+                make_predicate<serial_expr<Serializer>::template serialize>());
+        }
+    }
+
+    // The public operator.
+
+    namespace operators {
+        template <class Serializer, class T>
+        Serializer& operator<<(Serializer& serializer, T const& data) {
+            impl::serialize(serializer, data);
+            return serializer;
+        }
+    }
+
+    /// Operator '>>' (basically the same thing)
+
+    // The operator implementation. Put aside to avoid operator resolution making an infinite recursion.
+
+    namespace impl {
+        template <class Deserializer, class T>
+        void deserialize(Deserializer& deserializer, T& data) {
+            for_each_recursively(
+                data,
+                [&] (auto&& val) { deserializer >> val; }, 
+                make_predicate<serial_expr<Deserializer>::template deserialize>());
+        }
+    }
+
+    // The public operator.
+
+    namespace operators {
+        template <class Deserializer, class T>
+        Deserializer& operator>>(Deserializer& deserializer, T& data) {
+            impl::deserialize(deserializer, data);
+            return deserializer;
+        }
     }
 
 }

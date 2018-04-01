@@ -6,8 +6,18 @@
 
 using namespace std::string_literals;
 
-std::vector<std::string> standard_headers = { "tuple", "type_traits", "functional" };
-std::vector<std::string> att_headers = { "tools.hpp", "arity_functions.inl", "core.hpp", "comparisons.hpp", "hash.hpp" };
+std::vector<std::string> standard_headers = {
+    "tuple",
+    "type_traits",
+    "functional" };
+std::vector<std::string> att_headers = {
+    "tools.hpp",
+    "arity_functions.inl",
+    "core.hpp",
+    "loops.hpp",
+    "comparisons.hpp",
+    "hash.hpp",
+    "serialization.hpp" };
 
 std::string clean_file(std::string const& file) {
     std::ifstream tools{ INCLUDES_DIRECTORY + file };
