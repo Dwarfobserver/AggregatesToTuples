@@ -1,9 +1,9 @@
 
-# Aggregates to tuples
+# Aggregates to tuples 1.0
 
 [![Build Status](https://travis-ci.org/Dwarfobserver/AggregatesToTuples.svg?branch=master)](https://travis-ci.org/Dwarfobserver/AggregatesToTuples)
 
-This is a personal project in partial C++17 which enable to treat aggregate (or record) types as tuples.
+This is a single-header library in partial C++17 which enable to treat aggregate (or record) types as tuples.
 It works for MSVC, Clang and GCC.
 It has been inspired by this nice article : https://playfulprogramming.blogspot.ca/2016/12/serializing-structs-with-c17-structured.html
 
@@ -43,16 +43,13 @@ ctest -V
 
 ```
 
-The 'generators' folder has two programs :
+'single_include/aggregates_to_tuples.hpp' and 'include/arity_functions.inl' are created by the programs
+contained in 'generators'.
 
- - arity_functions which creates the 'arity_functions.inl' file.
- - single_include which glues together the files in 'include' into a unique header in 'single_include'.
+The python file 'full_build.py' can be called from your build directory (which must be in the root directory
+of the project) to build and execute generators, then build and launch tests.
 
-If you want to use them, they must be built with the cmake on your machine. To do that, call cmake with
--DMAKE_GENERATORS=1 : it will build the generators instead of the tests.
-
-This project in under construction and lacks features and tests.
-In particular :
+Project limitations :
 
  - The aggregate max size is limited (it can be increased with the arity_functions generator)
  - It does not support aggregates with native arrays (eg. T[N], use std::array<T, N> instead)

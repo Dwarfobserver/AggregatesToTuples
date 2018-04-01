@@ -62,5 +62,5 @@ int main() {
         std::cout << "Error : " << e.what();
         return 1;
     }
-    std::cout << "The file '" << TARGET_DIRECTORY << "aggregates_to_tuples.hpp' has been generated.";
+    std::cout << "The file '" << TARGET_DIRECTORY << "aggregates_to_tuples.hpp' has been generated.\n";
 }

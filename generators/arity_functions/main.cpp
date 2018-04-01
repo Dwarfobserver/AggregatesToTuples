@@ -94,5 +94,5 @@ int main(int argc, char** argv) {
         std::cout << "Error : " << e.what() << '\n';
         return 1;
     }
-    std::cout << "The file '" << TARGET_DIRECTORY << "arity_functions.inl' has been generated.";
+    std::cout << "The file '" << TARGET_DIRECTORY << "arity_functions.inl' has been generated.\n";
 }
