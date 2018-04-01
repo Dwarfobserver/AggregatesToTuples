@@ -38,21 +38,23 @@ mkdir build
 cd build
 cmake ..
 cmake --build .
-ctest
+ctest -V
 
 ```
 
-The 'gluer' program creates the single header in 'single_include' from the headers in 'include'.
+The 'generators' folder has two programs :
+
+ - arity_functions which creates the 'arity_functions.inl' file.
+ - single_include which glues together the files in 'include' into a unique header in 'single_include'.
+
+If you want to use them, they must be built with the cmake on your machine (with the commands above).
 
 This project in under construction and lacks features and tests.
 In particular :
 
- - The aggregate max size is limited (it can be increased with copy-pasta)
+ - The aggregate max size is limited (it can be increased with the arity_functions generator)
  - It does not support aggregates with native arrays (eg. T[N], use std::array<T, N> instead)
  - It is not precisely tested and serves more as a proof of concept
- - The single include created is not tested
 
 Note : std::is_aggregate<T> is not used because it is not implemented in MSVC (and not Clang from what I saw), but it would
 avoid some types detection caveats and greatly reduce compile time.
-
-
