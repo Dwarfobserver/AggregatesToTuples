@@ -69,7 +69,7 @@ namespace att {
             }
             else { // T is aggregate
                 return hash_tuple(
-                    as_tuple(val),
+                    att::as_tuple(val),
                     seed,
                     combiner,
                     value_tag<int, 0>{});

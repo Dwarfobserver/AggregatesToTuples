@@ -64,8 +64,8 @@ namespace att {
             }
             else { // T is aggregate
                 return impl::test_equality_tuple(
-                    as_tuple(lhs),
-                    as_tuple(rhs),
+                    att::as_tuple(lhs),
+                    att::as_tuple(rhs),
                     detail::value_tag<int, 0>{});
             }
         }
@@ -142,8 +142,8 @@ namespace att {
             }
             else { // T is aggregate
                 return impl::test_less_tuple(
-                    as_tuple(lhs),
-                    as_tuple(rhs),
+                    att::as_tuple(lhs),
+                    att::as_tuple(rhs),
                     detail::value_tag<int, 0>{});
             }
         }

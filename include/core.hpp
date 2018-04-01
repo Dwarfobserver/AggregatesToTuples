@@ -6,12 +6,9 @@
 #include <tools.hpp>
 #include <tuple>
 
+#include <arity_functions.inl>
+
 namespace att {
-
-    /// Defines the max arity that a type can have.
-    /// This size can be increased if as_tuple and to_tuple functions for a greater arity are provided.
-
-    constexpr int max_arity = 20;
 
     /// Detects if a type is brace-constructible from N elements.
 
@@ -126,7 +123,7 @@ namespace att {
 
     template <class T>
     constexpr bool is_aggregate = arity_of<T> != -1;
-
+/*
     namespace impl {
 
         /// Dispatched functions to make tuples based on the aggregate arity.
@@ -365,7 +362,7 @@ namespace att {
             return std::make_tuple(v1, v2, v3, v4, v5, v6, v7, v8, v9, v10, v11, v12, v13, v14, v15, v16, v17, v18, v19, v20);
         }
     }
-
+*/
     /// Makes a tuple of references on the given aggregate.
 
     template <class Aggregate, class = std::enable_if_t<
@@ -373,7 +370,7 @@ namespace att {
     >>
     auto as_tuple(Aggregate& aggregate) {
         constexpr int arity = arity_of<Aggregate>;
-        return impl::as_tuple(aggregate, detail::value_tag<int, arity>{});
+        return detail::as_tuple(aggregate, detail::value_tag<int, arity>{});
     }
 
     /// Copies the given aggregate as a tuple.
@@ -383,7 +380,7 @@ namespace att {
     >>
     auto to_tuple(Aggregate&& aggregate) {
         constexpr int arity = arity_of<std::remove_reference_t<Aggregate>>;
-        return impl::to_tuple(std::forward<Aggregate>(aggregate), detail::value_tag<int, arity>{});
+        return detail::to_tuple(std::forward<Aggregate>(aggregate), detail::value_tag<int, arity>{});
     }
 
     /// The return type of as_tuple.

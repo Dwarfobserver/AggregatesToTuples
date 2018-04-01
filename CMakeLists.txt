@@ -12,6 +12,6 @@ target_include_directories(tests PUBLIC include)
 enable_testing()
 add_test(tests "${CMAKE_BINARY_DIR}/tests")
 
-# Add gluer
+# Add programs which make the single header and the arity functions
 
-add_subdirectory(gluer)
+add_subdirectory(generators)
