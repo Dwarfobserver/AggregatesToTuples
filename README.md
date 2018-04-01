@@ -1,5 +1,5 @@
 
-# Aggregates to tuples 1.0
+# Aggregates to tuples
 
 [![Build Status](https://travis-ci.org/Dwarfobserver/AggregatesToTuples.svg?branch=master)](https://travis-ci.org/Dwarfobserver/AggregatesToTuples)
 
