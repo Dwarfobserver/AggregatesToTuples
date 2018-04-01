@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include <core.hpp>
+#include <loops.hpp>
 #include <functional>
 
 namespace att {
@@ -16,75 +16,27 @@ namespace att {
         return seed ^ hash + 0x9e3779b9 + (seed<<6) + (seed>>2);
     }
 
-    /// Check if a type has a std hash function.
-
-    namespace detail {
-        namespace impl {
-            template <class T>
-            using hash_expr = decltype(
-                std::declval<std::hash<T>>()(std::declval<T const&>())
-            );
-        }
+    /// The expression which detects if a type can be hashed.
+    
+    namespace impl {
         template <class T>
-        constexpr bool has_hash = is_detected<impl::hash_expr, T>;
+        using hash_expr = decltype(
+            std::declval<std::hash<std::remove_cv_t<T>>>()(std::declval<T const&>())
+        );
     }
 
-    namespace detail {
+    /// Public function, using for_each_recursively.
 
-        /// Forward declaration of the first recursive function.
-        
-        template <class T, class = std::enable_if_t<
-            detail::has_hash<T> || is_aggregate<T>
-        >>
-        size_t hash_val(T const& val, size_t seed, hash_combiner_t combiner);
-
-        /// The second recursive function, acting on tuples.
-
-        template <int I, class...Ts>
-        size_t hash_tuple(
-                std::tuple<Ts...> const& tuple,
-                size_t seed,
-                hash_combiner_t combiner,
-                value_tag<int, I>)
+    template <class T>
+    size_t hash(T const& data, hash_combiner_t combiner = default_hash_combiner) {
+        constexpr auto tag = make_predicate<impl::hash_expr>();
+        size_t seed = 0;
+        for_each_recursively(data, tag, [&] (auto const& val)
         {
-            if constexpr (I == sizeof...(Ts)) {
-                return seed;
-            }
-            else {
-                auto const& val = std::get<I>(tuple);
-                return hash_tuple(
-                    tuple,
-                    hash_val(val, seed, combiner),
-                    combiner,
-                    value_tag<int, I + 1>{});
-            }
-        }
-
-        /// The first recursive function implementation.
-
-        template <class T, class SFINAE>
-        size_t hash_val(T const& val, size_t seed, hash_combiner_t combiner) {
-            if constexpr (detail::has_hash<T>) {
-                return combiner(seed, std::hash<T>{}(val));
-            }
-            else { // T is aggregate
-                return hash_tuple(
-                    att::as_tuple(val),
-                    seed,
-                    combiner,
-                    value_tag<int, 0>{});
-            }
-        }
-
-    }
-
-    /// The public hash function.
-
-    template <class T, class = std::enable_if_t<
-        detail::has_hash<T> || is_aggregate<T>
-    >>
-    size_t hash(T const& val, hash_combiner_t combiner = default_hash_combiner) {
-        return detail::hash_val(val, 0, combiner);
+            using ValueT = typename std::remove_cv_t<std::remove_reference_t<decltype(val)>>;
+            seed = combiner(seed, std::hash<ValueT>{}(val));
+        });
+        return seed;
     }
 
 }

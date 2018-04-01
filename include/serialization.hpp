@@ -4,7 +4,6 @@
 
 #pragma once
 
-#include <core.hpp>
 #include <loops.hpp>
 
 namespace att {
@@ -21,10 +20,11 @@ namespace att {
         template <class Serializer, class T>
         void serialize(Serializer& serializer, T const& data) {
             using Expression = detail::curry<serialize_expr, Serializer>;
-            for_each_recursively(
-                data,
-                [&] (auto&& val) { serializer << val; },
-                make_predicate<Expression::template type>());
+            constexpr auto tag = make_predicate<Expression::template type>();
+            
+            for_each_recursively(data, tag, [&] (auto const& val) {
+                serializer << val;
+            });
         }
     }
 
@@ -50,10 +50,11 @@ namespace att {
         template <class Deserializer, class T>
         void deserialize(Deserializer& deserializer, T& data) {
             using Expression = detail::curry<deserialize_expr, Deserializer>;
-            for_each_recursively(
-                data,
-                [&] (auto&& val) { deserializer >> val; }, 
-                make_predicate<Expression::template type>());
+            constexpr auto tag = make_predicate<Expression::template type>();
+
+            for_each_recursively(data, tag, [&] (auto& val) {
+                deserializer >> val;
+            });
         }
     }
 

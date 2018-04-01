@@ -69,7 +69,7 @@ namespace att {
 
         /// Looping on tuples.
 
-        template <class F, template <class> class Predicate, int I, class...Ts>
+        template <template <class> class Predicate, class F, int I, class...Ts>
         void for_each_tuple_recursively(
                 std::tuple<Ts...>& tuple,
                 F&& f,
@@ -77,7 +77,7 @@ namespace att {
                 detail::hightype_tag<Predicate> tag)
         {
             if constexpr (I < sizeof...(Ts)) {
-                for_each_recursively(std::get<I>(tuple), f, tag);
+                for_each_recursively(std::get<I>(tuple), tag, f);
                 for_each_tuple_recursively(tuple, f, detail::value_tag<int, I + 1>{}, tag);
             }
         }
@@ -86,8 +86,8 @@ namespace att {
 
     /// for_each_recursively implementation.
 
-    template <class T, class F, template <class> class Predicate>
-    void for_each_recursively(T& data, F&& f, detail::hightype_tag<Predicate> tag) {
+    template <class T, template <class> class Predicate, class F>
+    void for_each_recursively(T& data, detail::hightype_tag<Predicate> tag, F&& f) {
         if constexpr (Predicate<T>::value) {
             f(data);
         }
