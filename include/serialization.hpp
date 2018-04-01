@@ -11,35 +11,24 @@ namespace att {
 
     /// Operator '<<'
 
-    /// Defines expressions used to pass predicates to serialization functions.
-
-    namespace impl {
-        template <class LeftType>
-        struct serial_expr {
-            template <class T>
-            using serialize = decltype(
-                std::declval<LeftType&>() << std::declval<T const&>()
-            );
-            template <class T>
-            using deserialize = decltype(
-                std::declval<LeftType&>() >> std::declval<T&>()
-            );
-        };
-    }
-
-    // The operator implementation. Put aside to avoid operator resolution making an infinite recursion.
+    /// The operator implementation. Put aside to avoid operator resolution making an infinite recursion.
 
     namespace impl {
         template <class Serializer, class T>
+        using serialize_expr = decltype(
+            std::declval<Serializer&>() << std::declval<T const&>()
+        );
+        template <class Serializer, class T>
         void serialize(Serializer& serializer, T const& data) {
+            using Expression = detail::curry<serialize_expr, Serializer>;
             for_each_recursively(
                 data,
                 [&] (auto&& val) { serializer << val; },
-                make_predicate<serial_expr<Serializer>::template serialize>());
+                make_predicate<Expression::template type>());
         }
     }
 
-    // The public operator.
+    /// The public operator.
 
     namespace operators {
         template <class Serializer, class T>
@@ -51,15 +40,20 @@ namespace att {
 
     /// Operator '>>' (basically the same thing)
 
-    // The operator implementation. Put aside to avoid operator resolution making an infinite recursion.
+    /// The operator implementation. Put aside to avoid operator resolution making an infinite recursion.
 
     namespace impl {
         template <class Deserializer, class T>
+        using deserialize_expr = decltype(
+            std::declval<Deserializer&>() >> std::declval<T&>()
+        );
+        template <class Deserializer, class T>
         void deserialize(Deserializer& deserializer, T& data) {
+            using Expression = detail::curry<deserialize_expr, Deserializer>;
             for_each_recursively(
                 data,
                 [&] (auto&& val) { deserializer >> val; }, 
-                make_predicate<serial_expr<Deserializer>::template deserialize>());
+                make_predicate<Expression::template type>());
         }
     }
 

@@ -120,4 +120,13 @@ namespace att::detail {
     template <template <class...> class Expr, class...Ts>
     constexpr bool is_detected = impl::is_detected<void, Expr, Ts...>::value;
 
+    /// Partially apply template type arguments to a template class.
+    /// MSVC do not support argument packs here the way I tried.
+
+    template <template <class, class> class T, class Arg>
+    struct curry {
+        template <class Other>
+        using type = T<Arg, Other>;
+    };
+
 }
