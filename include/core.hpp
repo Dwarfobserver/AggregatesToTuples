@@ -117,7 +117,7 @@ namespace att {
     }
 
     template <class T>
-    constexpr int arity_of = impl::arity_of<T>();
+    constexpr int arity_of = impl::arity_of<std::remove_reference_t<T>>();
 
     /// Helper value which indicates if a type is an aggregate.
 

@@ -62,8 +62,8 @@ namespace att {
     /// Predicate matches types to booleans with Predicate<T>::value.
     /// The boolean indicates if the function can be called on the type.
 
-    template <class T, class F, template <class> class Predicate>
-    void for_each_recursively(T& data, F&& f, detail::hightype_tag<Predicate>);
+    template <class T, template <class> class Predicate, class F>
+    void for_each_recursively(T& data, detail::hightype_tag<Predicate>, F&& f);
     
     namespace impl {
 

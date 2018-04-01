@@ -23,9 +23,9 @@ namespace {
 TEST_CASE("constexpr traits") {
     CHECK(!att::is_aggregate<wrapper>);
     CHECK( att::is_aggregate<person>);
-    CHECK( att::is_aggregate<movable>);
+    CHECK( att::is_aggregate<movable const&>);
 
-    CHECK(att::arity_of<person>  == 3);
+    CHECK(att::arity_of<person&> == 3);
     CHECK(att::arity_of<movable> == 1);
 }
 
