@@ -10,6 +10,10 @@ namespace {
         float const size;
         int age;
     };
+    union schrodinger {
+        int cat;
+        int catmeat;
+    };
     class wrapper {
         int value;
     public:
@@ -21,10 +25,16 @@ namespace {
 }
 
 TEST_CASE("constexpr traits") {
+    CHECK(!att::is_aggregate<float>);
+    CHECK(!att::is_aggregate<void*>);
+    CHECK(!att::is_aggregate<void (*) ()>);
+    CHECK(!att::is_aggregate<schrodinger>);
     CHECK(!att::is_aggregate<wrapper>);
-    CHECK( att::is_aggregate<person>);
-    CHECK( att::is_aggregate<movable const&>);
 
+    CHECK(att::is_aggregate<person>);
+    CHECK(att::is_aggregate<movable const&>);
+
+    CHECK(att::arity_of<int>     == -1);
     CHECK(att::arity_of<person&> == 3);
     CHECK(att::arity_of<movable> == 1);
 }

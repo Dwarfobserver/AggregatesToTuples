@@ -845,6 +845,18 @@ namespace att {
             impl::is_one_arg_constructible<void, T>::value;
     }
 
+    /// Check if a type must be manually discarded from the aggregate detection.
+
+    namespace detail {
+
+        template <class T>
+        constexpr bool is_aggregate_exception =
+            std::is_pointer_v<T> ||
+            std::is_integral_v<T> ||
+            std::is_floating_point_v<T> ||
+            std::is_union_v<T>;
+    }
+
     /// Gives the arity of a type (the number of elements which construct him).
     /// If he isn't an aggregate type, returns -1.
     /// If the maximum arity is reached, stops the compilation.
@@ -866,12 +878,12 @@ namespace att {
 
         template <class T>
         constexpr int arity_of() {
-            if constexpr (!detail::is_brace_constructible<T, 0> ||
-                detail::is_brace_constructible<T, max_arity + 1>)
-            {
-                return -1;
-            }
-            else if constexpr (detail::is_one_arg_constructible<T>) {
+            constexpr bool discarded = detail::is_aggregate_exception<T> ||
+                                      !detail::is_brace_constructible<T, 0> ||
+                                       detail::is_brace_constructible<T, max_arity + 1> ||
+                                       detail::is_one_arg_constructible<T>;
+
+            if constexpr (discarded) {
                 return -1;
             }
             else if constexpr (!detail::is_brace_constructible<T, 1>) {
