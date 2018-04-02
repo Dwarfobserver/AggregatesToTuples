@@ -83,9 +83,8 @@ namespace att {
 
         template <class T>
         constexpr bool is_aggregate_exception =
-            std::is_pointer_v<T> ||
-            std::is_integral_v<T> ||
-            std::is_floating_point_v<T> ||
+            std::is_fundamental_v<T> ||
+            std::is_pointer_v<T>     ||
             std::is_union_v<T>;
     }
 
@@ -110,10 +109,10 @@ namespace att {
 
         template <class T>
         constexpr int arity_of() {
-            constexpr bool discarded = detail::is_aggregate_exception<T> ||
+            constexpr bool discarded = detail::is_aggregate_exception<T>    ||
                                       !detail::is_brace_constructible<T, 0> ||
-                                       detail::is_brace_constructible<T, max_arity + 1> ||
-                                       detail::is_one_arg_constructible<T>;
+                                       detail::is_one_arg_constructible<T>  ||
+                                       detail::is_brace_constructible<T, max_arity + 1>;
 
             if constexpr (discarded) {
                 return -1;

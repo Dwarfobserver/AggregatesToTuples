@@ -851,9 +851,8 @@ namespace att {
 
         template <class T>
         constexpr bool is_aggregate_exception =
-            std::is_pointer_v<T> ||
-            std::is_integral_v<T> ||
-            std::is_floating_point_v<T> ||
+            std::is_fundamental_v<T> ||
+            std::is_pointer_v<T>     ||
             std::is_union_v<T>;
     }
 
@@ -878,10 +877,10 @@ namespace att {
 
         template <class T>
         constexpr int arity_of() {
-            constexpr bool discarded = detail::is_aggregate_exception<T> ||
+            constexpr bool discarded = detail::is_aggregate_exception<T>    ||
                                       !detail::is_brace_constructible<T, 0> ||
-                                       detail::is_brace_constructible<T, max_arity + 1> ||
-                                       detail::is_one_arg_constructible<T>;
+                                       detail::is_one_arg_constructible<T>  ||
+                                       detail::is_brace_constructible<T, max_arity + 1>;
 
             if constexpr (discarded) {
                 return -1;
@@ -965,7 +964,8 @@ namespace att {
         impl::for_each_tuple(refs, f, detail::value_tag<int, 0>{});
     }
 
-    /// Helper type to make predicates easily.
+    /// Helper type to make predicates easily based on an expression.
+    /// A predicate is a template type which matches types to booleans (with Predicate<T>::value).
 
     namespace impl {
         template <template <class> class Expression>
@@ -977,20 +977,18 @@ namespace att {
         };
     }
 
-    /// Helper function to pass a predicate to a function, based to the validity of an expression.
+    /// Helper alias for predicate types.
+
+    template <template <class> class Predicate>
+    using predicate_tag = detail::hightype_tag<Predicate>;
+
+    /// Helper function to create and pass a predicate to a function based to the validity of an expression.
 
     template <template <class> class Expression>
     constexpr auto make_predicate() {
         using Predicate = impl::predicate<Expression>;
-        using Tag = detail::hightype_tag<Predicate::template type>;
+        using Tag = predicate_tag<Predicate::template type>;
         return Tag {};
-    }
-
-    /// Helper function to pass a predicate to a function, which matches types to booleans (with Predicate<T>::value).
-
-    template <template <class> class Predicate>
-    constexpr auto pass_predicate() {
-        return detail::hightype_tag<Predicate>{};
     }
 
     /// Forward declaration of for_each_recursively.
@@ -998,7 +996,7 @@ namespace att {
     /// The boolean indicates if the function can be called on the type.
 
     template <class T, template <class> class Predicate, class F>
-    void for_each_recursively(T& data, detail::hightype_tag<Predicate>, F&& f);
+    void for_each_recursively(T& data, predicate_tag<Predicate> predicate, F&& f);
     
     namespace impl {
 
@@ -1009,11 +1007,11 @@ namespace att {
                 std::tuple<Ts...>& tuple,
                 F&& f,
                 detail::value_tag<int, I>,
-                detail::hightype_tag<Predicate> tag)
+                predicate_tag<Predicate> predicate)
         {
             if constexpr (I < sizeof...(Ts)) {
-                for_each_recursively(std::get<I>(tuple), tag, f);
-                for_each_tuple_recursively(tuple, f, detail::value_tag<int, I + 1>{}, tag);
+                for_each_recursively(std::get<I>(tuple), predicate, f);
+                for_each_tuple_recursively(tuple, f, detail::value_tag<int, I + 1>{}, predicate);
             }
         }
 
@@ -1022,13 +1020,13 @@ namespace att {
     /// for_each_recursively implementation.
 
     template <class T, template <class> class Predicate, class F>
-    void for_each_recursively(T& data, detail::hightype_tag<Predicate> tag, F&& f) {
+    void for_each_recursively(T& data, predicate_tag<Predicate> predicate, F&& f) {
         if constexpr (Predicate<T>::value) {
             f(data);
         }
         else if constexpr (is_aggregate<T>) {
             auto refs = att::as_tuple(data);
-            impl::for_each_tuple_recursively(refs, f, detail::value_tag<int, 0>{}, tag);
+            impl::for_each_tuple_recursively(refs, f, detail::value_tag<int, 0>{}, predicate);
         }
         else {
             static_assert(Predicate<T>::value,

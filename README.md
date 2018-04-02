@@ -25,9 +25,15 @@ person alex2 { "Alex", 25 };
 att::as_tuple_t<person> refs  = att::as_tuple(alex); // std::tuple<std::string&, int&>
 att::to_tuple_t<person> tuple = att::to_tuple(alex); // std::tuple<std::string, int>
 
+size_t hash = att::hash(alex); // string hash combined with int hash
+
 using namespace att::operators;
 
-bool lt = alex < alex2; // true
+bool eq = alex == alex2;       // false
+bool lt = alex < alex2;        // true
+
+std::ostringstream stream;
+stream << alex;                // stream.str() == "Alex24"
 
 ```
 
