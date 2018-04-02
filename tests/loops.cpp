@@ -21,6 +21,10 @@ namespace {
     struct predicate<int> {
         static constexpr bool value = true;
     };
+    template <>
+    struct predicate<int const> {
+        static constexpr bool value = true;
+    };
 }
 
 TEST_CASE("loops") {
