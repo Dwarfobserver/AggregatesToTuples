@@ -51,7 +51,7 @@ namespace att {
     /// Helper function to create and pass a predicate to a function based to the validity of an expression.
 
     template <template <class> class Expression>
-    constexpr auto make_predicate() {
+    constexpr auto make_predicate() noexcept {
         using Predicate = impl::predicate<Expression>;
         using Tag = predicate_tag<Predicate::template type>;
         return Tag {};

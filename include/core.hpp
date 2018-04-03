@@ -140,7 +140,7 @@ namespace att {
     template <class Aggregate, class = std::enable_if_t<
         is_aggregate<Aggregate>
     >>
-    auto as_tuple(Aggregate& aggregate) {
+    auto as_tuple(Aggregate& aggregate) noexcept {
         constexpr int arity = arity_of<Aggregate>;
         return detail::as_tuple(aggregate, detail::value_tag<int, arity>{});
     }

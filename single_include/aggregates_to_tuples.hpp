@@ -908,7 +908,7 @@ namespace att {
     template <class Aggregate, class = std::enable_if_t<
         is_aggregate<Aggregate>
     >>
-    auto as_tuple(Aggregate& aggregate) {
+    auto as_tuple(Aggregate& aggregate) noexcept {
         constexpr int arity = arity_of<Aggregate>;
         return detail::as_tuple(aggregate, detail::value_tag<int, arity>{});
     }
@@ -985,7 +985,7 @@ namespace att {
     /// Helper function to create and pass a predicate to a function based to the validity of an expression.
 
     template <template <class> class Expression>
-    constexpr auto make_predicate() {
+    constexpr auto make_predicate() noexcept {
         using Predicate = impl::predicate<Expression>;
         using Tag = predicate_tag<Predicate::template type>;
         return Tag {};

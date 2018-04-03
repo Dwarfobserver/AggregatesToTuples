@@ -14,15 +14,15 @@ namespace {
     };
 
     template <class T>
-    struct predicate {
+    struct is_int {
         static constexpr bool value = false;
     };
     template <>
-    struct predicate<int> {
+    struct is_int<int> {
         static constexpr bool value = true;
     };
     template <>
-    struct predicate<int const> {
+    struct is_int<int const> {
         static constexpr bool value = true;
     };
 }
@@ -36,7 +36,7 @@ TEST_CASE("loops") {
     });
     CHECK(members == 3);
     
-    constexpr auto tag = att::predicate_tag<predicate>{};
+    constexpr auto tag = att::predicate_tag<is_int>{};
     int sum = 0;
     att::for_each_recursively(h, tag, [&] (int val) {
         sum += val;
