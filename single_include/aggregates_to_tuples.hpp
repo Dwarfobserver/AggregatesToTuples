@@ -985,7 +985,7 @@ namespace att {
     /// The predicate indicates if the function can be called on the type.
 
     template <class T, template <class> class Predicate, class F>
-    void for_each_recursively(T& data, predicate_tag<Predicate> predicate, F&& f) {
+    void for_each_recursively(T& data, predicate_tag<Predicate>, F&& f) {
         
         static_assert(Predicate<T>::value || is_aggregate<T>,
             "T must be an aggregate, or the predicate for T must be true");
@@ -994,8 +994,8 @@ namespace att {
             f(data);
         }
         else { // T is aggregate
-            for_each(data, [&f, predicate] (auto&& arg) {
-                for_each_recursively(arg, predicate, f);
+            for_each(data, [&f] (auto&& arg) {
+                for_each_recursively(arg, predicate_tag<Predicate>{}, f);
             });
         }
     }
