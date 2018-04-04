@@ -1,7 +1,9 @@
 
 # Aggregates to tuples
 
-[![Build Status](https://travis-ci.org/Dwarfobserver/AggregatesToTuples.svg?branch=master)](https://travis-ci.org/Dwarfobserver/AggregatesToTuples)
+[![GCC Build Status](https://travis-ci.org/Dwarfobserver/AggregatesToTuples.svg?branch=master)](https://travis-ci.org/Dwarfobserver/AggregatesToTuples)
+
+[![MSVC Build Status](https://ci.appveyor.com/api/projects/status/github/Dwarfobserver/AggregatesToTuples?svg=true)](https://ci.appveyor.com/project/Dwarfobserver/aggregatestotuples)
 
 This is a single-header library in partial C++17 which enable to treat aggregate (or record) types as tuples.
 It works for MSVC, Clang and GCC.
