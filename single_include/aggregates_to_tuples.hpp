@@ -943,27 +943,15 @@ namespace att {
 /// Auto-merge of loops.hpp
 namespace att {
 
-    /// for_each which applies f recursively on a tuple.
-
-    namespace impl {
-        
-        template <class F, int I, class...Ts>
-        void for_each_tuple(std::tuple<Ts...>& tuple, F&& f, detail::value_tag<int , I>) {
-            if constexpr (I < sizeof...(Ts)) {
-                f(std::get<I>(tuple));
-                for_each_tuple(tuple, f, detail::value_tag<int, I + 1>{});
-            }
-        }
-    }
-
     /// for_each for aggregates.
 
-    template <class T, class F, class = std::enable_if_t<
-        is_aggregate<T>
+    template <class Aggregate, class F, class = std::enable_if_t<
+        is_aggregate<Aggregate>
     >>
-    void for_each(T&& aggregate, F&& f) {
-        auto refs = as_tuple(aggregate);
-        impl::for_each_tuple(refs, f, detail::value_tag<int, 0>{});
+    constexpr void for_each(Aggregate&& aggregate, F&& f) {
+        std::apply([f = std::forward<F>(f)] (auto&&...args) {
+            (f(std::forward<decltype(args)>(args)), ...);
+        }, as_tuple(aggregate));
     }
 
     /// Helper type to make predicates easily based on an expression.
