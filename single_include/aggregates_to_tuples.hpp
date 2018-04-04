@@ -949,7 +949,7 @@ namespace att {
         is_aggregate<Aggregate>
     >>
     constexpr void for_each(Aggregate&& aggregate, F&& f) {
-        std::apply([f = std::forward<F>(f)] (auto&&...args) {
+        std::apply([&f] (auto&&...args) {
             (f(std::forward<decltype(args)>(args)), ...);
         }, as_tuple(aggregate));
     }
@@ -981,33 +981,8 @@ namespace att {
         return Tag {};
     }
 
-    /// Forward declaration of for_each_recursively.
-    /// Predicate matches types to booleans with Predicate<T>::value.
-    /// The boolean indicates if the function can be called on the type.
-
-    template <class T, template <class> class Predicate, class F>
-    void for_each_recursively(T& data, predicate_tag<Predicate> predicate, F&& f);
-    
-    namespace impl {
-
-        /// Looping on tuples.
-
-        template <template <class> class Predicate, class F, int I, class...Ts>
-        void for_each_tuple_recursively(
-                std::tuple<Ts...>& tuple,
-                F&& f,
-                detail::value_tag<int, I>,
-                predicate_tag<Predicate> predicate)
-        {
-            if constexpr (I < sizeof...(Ts)) {
-                for_each_recursively(std::get<I>(tuple), predicate, f);
-                for_each_tuple_recursively(tuple, f, detail::value_tag<int, I + 1>{}, predicate);
-            }
-        }
-
-    }
-
     /// for_each_recursively implementation.
+    /// The predicate indicates if the function can be called on the type.
 
     template <class T, template <class> class Predicate, class F>
     void for_each_recursively(T& data, predicate_tag<Predicate> predicate, F&& f) {
@@ -1019,8 +994,9 @@ namespace att {
             f(data);
         }
         else { // T is aggregate
-            auto refs = as_tuple(data);
-            impl::for_each_tuple_recursively(refs, f, detail::value_tag<int, 0>{}, predicate);
+            for_each(data, [&f, predicate] (auto&& arg) {
+                for_each_recursively(arg, predicate, f);
+            });
         }
     }
 
@@ -1050,23 +1026,8 @@ namespace att {
         template <class T>
         bool test_equality(T const& lhs, T const& rhs);
 
-        template <int I, class...Ts>
-        bool test_equality_tuple(
-                std::tuple<Ts...> const& lhs,
-                std::tuple<Ts...> const& rhs,
-                detail::value_tag<int, I>)
-        {
-            if constexpr (I == sizeof...(Ts)) {
-                return true;
-            }
-            else {
-                return test_equality(std::get<I>(lhs), std::get<I>(rhs)) &&
-                       test_equality_tuple(lhs, rhs, detail::value_tag<int, I + 1>{});
-            }
-        }
-        
         template <class...Ts, size_t...Is>
-        bool test_equality_tuple2(
+        bool test_equality_tuple(
                 std::tuple<Ts...> const& lhs,
                 std::tuple<Ts...> const& rhs,
                 std::index_sequence<Is...>)
@@ -1084,7 +1045,7 @@ namespace att {
                 return lhs == rhs;
             }
             else { // T is aggregate
-                return test_equality_tuple2(
+                return test_equality_tuple(
                     att::as_tuple(lhs),
                     att::as_tuple(rhs),
                     std::make_index_sequence<att::arity_of<T>>{});
@@ -1145,7 +1106,7 @@ namespace att {
                 return test_less_tuple(lhs, rhs, detail::value_tag<int, I + 1>{});
             }
         }
-
+        
         template <class T>
         bool test_less(T const& lhs, T const& rhs) {
 

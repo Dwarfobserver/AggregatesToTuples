@@ -13,7 +13,7 @@ namespace att {
         is_aggregate<Aggregate>
     >>
     constexpr void for_each(Aggregate&& aggregate, F&& f) {
-        std::apply([f = std::forward<F>(f)] (auto&&...args) {
+        std::apply([&f] (auto&&...args) {
             (f(std::forward<decltype(args)>(args)), ...);
         }, as_tuple(aggregate));
     }
@@ -45,33 +45,8 @@ namespace att {
         return Tag {};
     }
 
-    /// Forward declaration of for_each_recursively.
-    /// Predicate matches types to booleans with Predicate<T>::value.
-    /// The boolean indicates if the function can be called on the type.
-
-    template <class T, template <class> class Predicate, class F>
-    void for_each_recursively(T& data, predicate_tag<Predicate> predicate, F&& f);
-    
-    namespace impl {
-
-        /// Looping on tuples.
-
-        template <template <class> class Predicate, class F, int I, class...Ts>
-        void for_each_tuple_recursively(
-                std::tuple<Ts...>& tuple,
-                F&& f,
-                detail::value_tag<int, I>,
-                predicate_tag<Predicate> predicate)
-        {
-            if constexpr (I < sizeof...(Ts)) {
-                for_each_recursively(std::get<I>(tuple), predicate, f);
-                for_each_tuple_recursively(tuple, f, detail::value_tag<int, I + 1>{}, predicate);
-            }
-        }
-
-    }
-
     /// for_each_recursively implementation.
+    /// The predicate indicates if the function can be called on the type.
 
     template <class T, template <class> class Predicate, class F>
     void for_each_recursively(T& data, predicate_tag<Predicate> predicate, F&& f) {
@@ -83,8 +58,9 @@ namespace att {
             f(data);
         }
         else { // T is aggregate
-            auto refs = as_tuple(data);
-            impl::for_each_tuple_recursively(refs, f, detail::value_tag<int, 0>{}, predicate);
+            for_each(data, [&f, predicate] (auto&& arg) {
+                for_each_recursively(arg, predicate, f);
+            });
         }
     }
 
