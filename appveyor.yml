@@ -1,0 +1,12 @@
+
+version: '{build}'
+image: Visual Studio 2017
+configuration:
+  - Release
+  - Debug
+platform:
+  - x64
+script:
+  - mkdir build
+  - cd build
+  - python ../full_build.py
