@@ -25,10 +25,13 @@ if argc > 2:
 
 max_arity = sys.argv[1] if argc == 2 else 50
 
-call(['cmake', '-DMAKE_GENERATORS=1', '..'])
-call(['cmake', '--build', '.'])
-call(['./make_arity_functions', str(max_arity)])
-call(['./make_single_header'])
-call(['cmake', '-DMAKE_GENERATORS=0', '..'])
-call(['cmake', '--build', '.'])
-call(['ctest', '-V'])
+def check(code):
+    if code != 0: sys.exit(1)
+
+check(call(['cmake', '-DMAKE_GENERATORS=1', '..']))
+check(call(['cmake', '--build', '.']))
+check(call(['./make_arity_functions', str(max_arity)]))
+check(call(['./make_single_header']))
+check(call(['cmake', '-DMAKE_GENERATORS=0', '..']))
+check(call(['cmake', '--build', '.']))
+check(call(['ctest', '-V']))

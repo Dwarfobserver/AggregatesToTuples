@@ -1,8 +1,10 @@
 
 dist: trusty
 sudo: required
-language: cpp
-compiler: gcc
+#language: cpp
+#compiler: gcc
+language: python
+python: "3.6"
 addons:
   apt:
     sources:
@@ -18,8 +20,6 @@ install:
   - export CXX=/usr/bin/g++-7
   - gcc -v && g++ -v && cmake --version
 script:
-  - mkdir -p build
+  - mkdir build
   - cd build
-  - cmake .. 
-  - cmake --build .
-  - ctest -V
+  - python ../full_build.py
