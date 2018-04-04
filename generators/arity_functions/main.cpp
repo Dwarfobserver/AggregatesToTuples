@@ -11,7 +11,7 @@ void write_function(std::ostream& header, int arity) {
     std::string tag = "value_tag<int, " + std::to_string(arity) + ">";
 
     header << "\n        template <class Aggregate>";
-    header << "\n        auto as_tuple(Aggregate& aggregate, " << tag << ") {";
+    header << "\n        auto as_tuple_impl(Aggregate& aggregate, " << tag << ") {";
     if (arity == 0) {
         header << "\n            return std::make_tuple();";
     }
@@ -26,7 +26,7 @@ void write_function(std::ostream& header, int arity) {
     header << "\n        }";
 
     header << "\n        template <class Aggregate>";
-    header << "\n        auto to_tuple(Aggregate&& aggregate, " << tag << ") {";
+    header << "\n        auto to_tuple_impl(Aggregate&& aggregate, " << tag << ") {";
     if (arity == 0) {
         header << "\n            return std::make_tuple();";
     }

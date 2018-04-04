@@ -142,7 +142,7 @@ namespace att {
     >>
     auto as_tuple(Aggregate& aggregate) noexcept {
         constexpr int arity = arity_of<Aggregate>;
-        return detail::as_tuple(aggregate, detail::value_tag<int, arity>{});
+        return detail::as_tuple_impl(aggregate, detail::value_tag<int, arity>{});
     }
 
     /// Copies the given aggregate as a tuple.
@@ -152,7 +152,7 @@ namespace att {
     >>
     auto to_tuple(Aggregate&& aggregate) {
         constexpr int arity = arity_of<std::remove_reference_t<Aggregate>>;
-        return detail::to_tuple(std::forward<Aggregate>(aggregate), detail::value_tag<int, arity>{});
+        return detail::to_tuple_impl(std::forward<Aggregate>(aggregate), detail::value_tag<int, arity>{});
     }
 
     /// The return type of as_tuple.

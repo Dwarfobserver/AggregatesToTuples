@@ -91,7 +91,7 @@ namespace att {
             f(data);
         }
         else if constexpr (is_aggregate<T>) {
-            auto refs = att::as_tuple(data);
+            auto refs = as_tuple(data);
             impl::for_each_tuple_recursively(refs, f, detail::value_tag<int, 0>{}, predicate);
         }
         else {
