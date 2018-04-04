@@ -37,6 +37,10 @@ TEST_CASE("constexpr traits") {
     CHECK(att::arity_of<int>     == -1);
     CHECK(att::arity_of<person&> == 3);
     CHECK(att::arity_of<movable> == 1);
+
+    CHECK(!noexcept(att::to_tuple(std::declval<person const&>())));
+    CHECK( noexcept(att::as_tuple(std::declval<person const&>())));
+    CHECK( noexcept(att::to_tuple(std::declval<person&&>())));
 }
 
 TEST_CASE("core functions and types") {
