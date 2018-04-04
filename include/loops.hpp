@@ -75,16 +75,16 @@ namespace att {
 
     template <class T, template <class> class Predicate, class F>
     void for_each_recursively(T& data, predicate_tag<Predicate> predicate, F&& f) {
+        
+        static_assert(Predicate<T>::value || is_aggregate<T>,
+            "T must be an aggregate, or the predicate for T must be true");
+
         if constexpr (Predicate<T>::value) {
             f(data);
         }
-        else if constexpr (is_aggregate<T>) {
+        else { // T is aggregate
             auto refs = as_tuple(data);
             impl::for_each_tuple_recursively(refs, f, detail::value_tag<int, 0>{}, predicate);
-        }
-        else {
-            static_assert(Predicate<T>::value,
-            "T must be an aggregate, or the predicate for T must be true");
         }
     }
 

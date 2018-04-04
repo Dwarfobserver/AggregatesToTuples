@@ -61,8 +61,6 @@ Project limitations :
 
  - The aggregate max size is limited (it can be increased with the arity_functions generator)
  - It does not support aggregates with native arrays (eg. T[N], use std::array<T, N> instead)
- - It is not precisely tested and serves more as a proof of concept
- - When the types don't match, the compilation error messge is disgusting
 
 Note : std::is_aggregate<T> is not used because it is not implemented in MSVC (and not Clang from what I saw), but it would
 avoid some types detection caveats and greatly reduce compile time.
