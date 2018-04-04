@@ -1065,6 +1065,15 @@ namespace att {
             }
         }
         
+        template <class...Ts, size_t...Is>
+        bool test_equality_tuple2(
+                std::tuple<Ts...> const& lhs,
+                std::tuple<Ts...> const& rhs,
+                std::index_sequence<Is...>)
+        {
+            return (... && test_equality(std::get<Is>(lhs), std::get<Is>(rhs)));
+        }
+        
         template <class T>
         bool test_equality(T const& lhs, T const& rhs) {
             
@@ -1075,10 +1084,10 @@ namespace att {
                 return lhs == rhs;
             }
             else { // T is aggregate
-                return test_equality_tuple(
+                return test_equality_tuple2(
                     att::as_tuple(lhs),
                     att::as_tuple(rhs),
-                    detail::value_tag<int, 0>{});
+                    std::make_index_sequence<att::arity_of<T>>{});
             }
         }
     }

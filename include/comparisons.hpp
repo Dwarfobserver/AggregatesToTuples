@@ -29,19 +29,13 @@ namespace att {
         template <class T>
         bool test_equality(T const& lhs, T const& rhs);
 
-        template <int I, class...Ts>
+        template <class...Ts, size_t...Is>
         bool test_equality_tuple(
                 std::tuple<Ts...> const& lhs,
                 std::tuple<Ts...> const& rhs,
-                detail::value_tag<int, I>)
+                std::index_sequence<Is...>)
         {
-            if constexpr (I == sizeof...(Ts)) {
-                return true;
-            }
-            else {
-                return test_equality(std::get<I>(lhs), std::get<I>(rhs)) &&
-                       test_equality_tuple(lhs, rhs, detail::value_tag<int, I + 1>{});
-            }
+            return (... && test_equality(std::get<Is>(lhs), std::get<Is>(rhs)));
         }
         
         template <class T>
@@ -57,7 +51,7 @@ namespace att {
                 return test_equality_tuple(
                     att::as_tuple(lhs),
                     att::as_tuple(rhs),
-                    detail::value_tag<int, 0>{});
+                    std::make_index_sequence<att::arity_of<T>>{});
             }
         }
     }
@@ -115,7 +109,7 @@ namespace att {
                 return test_less_tuple(lhs, rhs, detail::value_tag<int, I + 1>{});
             }
         }
-
+        
         template <class T>
         bool test_less(T const& lhs, T const& rhs) {
 
