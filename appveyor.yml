@@ -6,7 +6,7 @@ configuration:
   - Debug
 platform:
   - x64
-script:
+build_script:
   - mkdir build
   - cd build
   - python ../full_build.py
