@@ -27,10 +27,10 @@ namespace att {
     namespace impl {
         
         template <class T>
-        bool test_equality(T const& lhs, T const& rhs);
+        constexpr bool test_equality(T const& lhs, T const& rhs);
 
         template <class...Ts, size_t...Is>
-        bool test_equality_tuple(
+        constexpr bool test_equality_tuple(
                 std::tuple<Ts...> const& lhs,
                 std::tuple<Ts...> const& rhs,
                 std::index_sequence<Is...>)
@@ -39,7 +39,7 @@ namespace att {
         }
         
         template <class T>
-        bool test_equality(T const& lhs, T const& rhs) {
+        constexpr bool test_equality(T const& lhs, T const& rhs) {
             
             static_assert(detail::has_equality<T> || is_aggregate<T>,
                 "T must be an aggregate, or operator==(T const&, T const&) must be implemented");
@@ -60,11 +60,11 @@ namespace att {
 
     namespace operators {
         template <class T>
-        bool operator==(T const& lhs, T const& rhs) {
+        constexpr bool operator==(T const& lhs, T const& rhs) {
             return impl::test_equality(lhs, rhs);
         }
         template <class T>
-        bool operator!=(T const& lhs, T const& rhs) {
+        constexpr bool operator!=(T const& lhs, T const& rhs) {
             return !impl::test_equality(lhs, rhs);
         }
     }
@@ -89,10 +89,10 @@ namespace att {
     namespace impl {
         
         template <class T>
-        bool test_less(T const& lhs, T const& rhs);
+        constexpr bool test_less(T const& lhs, T const& rhs);
 
         template <int I, class...Ts>
-        bool test_less_tuple(
+        constexpr bool test_less_tuple(
                 std::tuple<Ts...> const& lhs,
                 std::tuple<Ts...> const& rhs,
                 detail::value_tag<int, I>)
@@ -111,7 +111,7 @@ namespace att {
         }
         
         template <class T>
-        bool test_less(T const& lhs, T const& rhs) {
+        constexpr bool test_less(T const& lhs, T const& rhs) {
 
             static_assert(detail::has_less<T> || is_aggregate<T>,
                 "T must be an aggregate, or operator<(T const&, T const&) must be implemented");
@@ -132,19 +132,19 @@ namespace att {
 
     namespace operators {
         template <class T>
-        bool operator<(T const& lhs, T const& rhs) {
+        constexpr bool operator<(T const& lhs, T const& rhs) {
             return impl::test_less(lhs, rhs);
         }
         template <class T>
-        bool operator<=(T const& lhs, T const& rhs) {
+        constexpr bool operator<=(T const& lhs, T const& rhs) {
             return !impl::test_less(rhs, lhs);
         }
         template <class T>
-        bool operator>(T const& lhs, T const& rhs) {
+        constexpr bool operator>(T const& lhs, T const& rhs) {
             return impl::test_less(rhs, lhs);
         }
         template <class T>
-        bool operator>=(T const& lhs, T const& rhs) {
+        constexpr bool operator>=(T const& lhs, T const& rhs) {
             return !impl::test_less(lhs, rhs);
         }
     }

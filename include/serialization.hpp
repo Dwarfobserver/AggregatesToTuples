@@ -18,7 +18,7 @@ namespace att {
             std::declval<Serializer&>() << std::declval<T const&>()
         );
         template <class Serializer, class T>
-        void serialize(Serializer& serializer, T const& data) {
+        constexpr void serialize(Serializer& serializer, T const& data) {
             using Expression = detail::curry<serialize_expr, Serializer>;
             constexpr auto tag = make_predicate<Expression::template type>();
             
@@ -32,7 +32,7 @@ namespace att {
 
     namespace operators {
         template <class Serializer, class T>
-        Serializer& operator<<(Serializer& serializer, T const& data) {
+        constexpr Serializer& operator<<(Serializer& serializer, T const& data) {
             impl::serialize(serializer, data);
             return serializer;
         }
@@ -48,7 +48,7 @@ namespace att {
             std::declval<Deserializer&>() >> std::declval<T&>()
         );
         template <class Deserializer, class T>
-        void deserialize(Deserializer& deserializer, T& data) {
+        constexpr void deserialize(Deserializer& deserializer, T& data) {
             using Expression = detail::curry<deserialize_expr, Deserializer>;
             constexpr auto tag = make_predicate<Expression::template type>();
 
@@ -62,7 +62,7 @@ namespace att {
 
     namespace operators {
         template <class Deserializer, class T>
-        Deserializer& operator>>(Deserializer& deserializer, T& data) {
+        constexpr Deserializer& operator>>(Deserializer& deserializer, T& data) {
             impl::deserialize(deserializer, data);
             return deserializer;
         }

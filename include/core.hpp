@@ -140,7 +140,7 @@ namespace att {
     template <class Aggregate, class = std::enable_if_t<
         is_aggregate<Aggregate>
     >>
-    auto as_tuple(Aggregate& aggregate) noexcept {
+    constexpr auto as_tuple(Aggregate& aggregate) noexcept {
         constexpr int arity = arity_of<Aggregate>;
         return detail::as_tuple_impl(aggregate, detail::value_tag<int, arity>{});
     }
@@ -150,7 +150,7 @@ namespace att {
     template <class Aggregate, class = std::enable_if_t<
         is_aggregate<std::remove_reference_t<Aggregate>>
     >>
-    auto to_tuple(Aggregate&& aggregate)
+    constexpr auto to_tuple(Aggregate&& aggregate)
         noexcept(!std::is_reference_v<Aggregate> && std::is_nothrow_move_constructible_v<Aggregate>)
     {
         constexpr int arity = arity_of<std::remove_reference_t<Aggregate>>;

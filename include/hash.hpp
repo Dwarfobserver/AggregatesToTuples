@@ -12,7 +12,7 @@ namespace att {
 
     using hash_combiner_t = size_t (*) (size_t, size_t);
 
-    size_t default_hash_combiner(size_t seed, size_t hash) {
+    constexpr size_t default_hash_combiner(size_t seed, size_t hash) {
         return seed ^ hash + 0x9e3779b9 + (seed<<6) + (seed>>2);
     }
 
@@ -28,7 +28,7 @@ namespace att {
     /// Public function, using for_each_recursively.
 
     template <class T>
-    size_t hash(T const& data, hash_combiner_t combiner = default_hash_combiner) {
+    constexpr size_t hash(T const& data, hash_combiner_t combiner = default_hash_combiner) {
         constexpr auto tag = make_predicate<impl::hash_expr>();
         size_t seed = 0;
         for_each_recursively(data, tag, [&] (auto const& val)
