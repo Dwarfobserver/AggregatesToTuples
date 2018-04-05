@@ -73,3 +73,15 @@ TEST_CASE("make tuple by move") {
     auto& ptr = std::get<0>(tuple);
     CHECK(*ptr == 42);
 }
+
+TEST_CASE("from tuples") {
+    auto tuple = std::make_tuple(std::make_unique<int>(42));
+    auto m = att::from_tuple(std::move(tuple)).make<movable>();
+
+    CHECK(*m.ptr == 42);
+
+    tuple = std::make_tuple(std::make_unique<int>(76));
+    att::from_tuple(std::move(tuple), m);
+
+    CHECK(*m.ptr == 76);
+}

@@ -939,6 +939,88 @@ namespace att {
         to_tuple(std::declval<Aggregate>())
     )>;
 
+    /// From tuple with out parameter, with copy and move versions.
+
+    template <class Aggregate, class...Ts, class = std::enable_if_t<
+        is_aggregate<Aggregate>
+    >>
+    constexpr void from_tuple(std::tuple<Ts...> const& tuple, Aggregate& aggregate) {
+        auto refs = as_tuple(aggregate);
+        refs = tuple;
+    }
+    
+    template <class Aggregate, class...Ts, class = std::enable_if_t<
+        is_aggregate<Aggregate>
+    >>
+    constexpr void from_tuple(std::tuple<Ts...>&& tuple, Aggregate& aggregate)
+        noexcept(std::is_nothrow_move_constructible_v<std::tuple<Ts...>>)
+    {
+        auto refs = as_tuple(aggregate);
+        refs = std::move(tuple);
+    }
+
+    /// From tuple proxy objects which creates the aggregate.
+
+    namespace detail {
+
+        /// Copy version.
+
+        template <class...Ts>
+        struct tuple_copy_proxy {
+            constexpr tuple_copy_proxy(std::tuple<Ts...> const& tuple) noexcept : tuple(tuple) {}
+        private:
+            std::tuple<Ts...> const& tuple;
+
+            template <class Aggregate, size_t...Is>
+            constexpr Aggregate make_impl(type_tag<Aggregate>, std::index_sequence<Is...>) {
+                return Aggregate { std::get<Is>(tuple) ... };
+            };
+        public:
+            template <class Aggregate, class = std::enable_if_t<
+                is_aggregate<Aggregate>
+            >>
+            constexpr Aggregate make() {
+                return make_impl(type_tag<Aggregate>{}, std::index_sequence_for<Ts...>{});
+            };
+        };
+        
+        /// Move version.
+
+        template <class...Ts>
+        struct tuple_move_proxy {
+            constexpr tuple_move_proxy(std::tuple<Ts...>&& tuple) noexcept : tuple(tuple) {}
+        private:
+            std::tuple<Ts...>& tuple;
+
+            template <class Aggregate, size_t...Is>
+            constexpr Aggregate make_impl(type_tag<Aggregate>, std::index_sequence<Is...>) {
+                return Aggregate { std::move(std::get<Is>(tuple)) ... };
+            };
+        public:
+            template <class Aggregate, class = std::enable_if_t<
+                is_aggregate<Aggregate>
+            >>
+            constexpr Aggregate make() 
+                noexcept(std::is_nothrow_move_constructible_v<std::tuple<Ts...>>)
+            {
+                return make_impl(type_tag<Aggregate>{}, std::index_sequence_for<Ts...>{});
+            };
+        };
+
+    }
+
+    /// From tuples with their proxies, with copy and move versions.
+
+    template <class...Ts>
+    constexpr auto from_tuple(std::tuple<Ts...> const& tuple) noexcept {
+        return detail::tuple_copy_proxy<Ts...>{ tuple };
+    }
+    
+    template <class...Ts>
+    constexpr auto from_tuple(std::tuple<Ts...>&& tuple) noexcept {
+        return detail::tuple_move_proxy<Ts...>{ std::move(tuple) };
+    }
+
 }
 /// Auto-merge of loops.hpp
 namespace att {
