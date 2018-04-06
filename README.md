@@ -34,10 +34,13 @@ using namespace att::operators;
 std::ostringstream stream;
 stream << alex;                // stream.str() == "{ Alex , { 24 , 182 } }"
 
-auto alex2 = alex;
+person alex2;
+stream >> alex2;
+
+bool eq = alex == alex2;       // true
+
 alex2.infos.size += 1;
 
-bool eq = alex == alex2;       // false
 bool lt = alex < alex2;        // true
 
 att::as_tuple_t<person> refs  = att::as_tuple(alex); // std::tuple<std::string&, info&>
