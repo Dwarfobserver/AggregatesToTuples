@@ -21,15 +21,13 @@ namespace att {
     /// Helper type to make predicates easily based on an expression.
     /// A predicate is a template type which matches types to booleans (with Predicate<T>::value).
 
-    namespace impl {
-        template <template <class> class Expression>
-        struct predicate {
-            template <class T>
-            struct type {
-                static constexpr bool value = detail::is_detected<Expression, T>;
-            };
+    template <template <class> class Expression>
+    struct expression_predicate {
+        template <class T>
+        struct type {
+            static constexpr bool value = detail::is_detected<Expression, T>;
         };
-    }
+    };
 
     /// Helper alias for predicate types.
 
@@ -40,7 +38,7 @@ namespace att {
 
     template <template <class> class Expression>
     constexpr auto make_predicate() noexcept {
-        using Predicate = impl::predicate<Expression>;
+        using Predicate = expression_predicate<Expression>;
         using Tag = predicate_tag<Predicate::template type>;
         return Tag {};
     }

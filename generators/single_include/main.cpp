@@ -9,7 +9,8 @@ using namespace std::string_literals;
 std::vector<std::string> standard_headers = {
     "tuple",
     "type_traits",
-    "functional" };
+    "functional",
+    "iostream" };
 std::vector<std::string> att_headers = {
     "tools.hpp",
     "arity_functions.inl",

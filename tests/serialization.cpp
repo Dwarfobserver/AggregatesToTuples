@@ -24,13 +24,13 @@ TEST_CASE("ostream serialization") {
 
     ostream << alice << bob;
 
-    CHECK(ostream.str() == "Alice""32""176"
-                           "Bob"  "24""183");
+    CHECK(ostream.str() == "{ Alice , { 32 , 176 } }"
+                             "{ Bob , { 24 , 183 } }");
 
     person unknown;
 
     std::stringstream stream;
-    stream << "Brown 68 182";
+    stream << "{ Brown , { 68 , 182 } }";
 
     stream >> unknown;
 
@@ -40,15 +40,47 @@ TEST_CASE("ostream serialization") {
 }
 
 namespace {
-    struct number_serializer {
+    struct number_serializer { /// How serialization could be implemented :
         int* buffer;
 
-        number_serializer& operator<<(int i) {
+        /// The operation implementations.
+
+        void serialize(int i) {
             *(buffer++) = i;
+        }
+        void deserialize(int& i) {
+            i = *(buffer++);
+        }
+
+        /// The expressions which make predicates.
+
+        template <class T>
+        using serialize_expr = decltype(
+            std::declval<number_serializer&>().serialize(std::declval<T const&>())
+        );
+
+        template <class T>
+        using deserialize_expr = decltype(
+            std::declval<number_serializer&>().deserialize(std::declval<T&>())
+        );
+
+        /// The public operators.
+
+        template <class T>
+        number_serializer& operator<<(T const& data) {
+            constexpr auto predicate = att::make_predicate<serialize_expr>();
+            att::for_each_recursively(data, predicate, [this] (auto&& val) {
+                serialize(val);
+            });
             return *this;
         }
-        number_serializer& operator>>(int& i) {
-            i = *(buffer++);
+
+        template <class T>
+        number_serializer& operator>>(T& data) {
+            constexpr auto predicate = att::make_predicate<deserialize_expr>();
+            att::for_each_recursively(data, predicate, [this] (auto&& val) {
+                deserialize(val);
+            });
             return *this;
         }
     };
@@ -59,14 +91,12 @@ namespace {
     };
 }
 
-
-TEST_CASE("custom serialization") {
+TEST_CASE("custom serialization") { 
     int buffer[10];
 
     info_pack const infos = { { 1, 2 }, { 3, 4 }, { 5, 6 } };
 
     number_serializer stream { buffer };
-    using namespace att::operators;
 
     stream << infos;
 

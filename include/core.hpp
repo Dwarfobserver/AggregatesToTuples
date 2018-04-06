@@ -85,6 +85,7 @@ namespace att {
         constexpr bool is_aggregate_exception =
             std::is_fundamental_v<T> ||
             std::is_pointer_v<T>     ||
+            std::is_array_v<T>       ||
             std::is_union_v<T>;
     }
 

@@ -12,30 +12,38 @@ It has been inspired by this nice article : https://playfulprogramming.blogspot.
 Using tuples instead of aggregates can allow many functional programming algorithms and automatic
 properties, such as equality comparaison, serialization or hash.
 
-Little exemple of use :
+Overview of some features :
 
 ```cpp
 
+struct info {
+    int age;
+    int size;
+};
 struct person {
     std::string name;
-    int age;
+    info infos;
 };
 
-person alex  { "Alex", 24 };
-person alex2 { "Alex", 25 };
+auto alex = person { "Alex", { 24, 182 } };
 
-att::as_tuple_t<person> refs  = att::as_tuple(alex); // std::tuple<std::string&, int&>
-att::to_tuple_t<person> tuple = att::to_tuple(alex); // std::tuple<std::string, int>
-
-size_t hash = att::hash(alex); // string hash combined with int hash
+size_t hash = att::hash(alex); // combinaison of string hash and two int hash
 
 using namespace att::operators;
+
+std::ostringstream stream;
+stream << alex;                // stream.str() == "{ Alex , { 24 , 182 } }"
+
+auto alex2 = alex;
+alex2.infos.size += 1;
 
 bool eq = alex == alex2;       // false
 bool lt = alex < alex2;        // true
 
-std::ostringstream stream;
-stream << alex;                // stream.str() == "Alex24"
+att::as_tuple_t<person> refs  = att::as_tuple(alex); // std::tuple<std::string&, info&>
+att::to_tuple_t<person> tuple = att::to_tuple(alex); // std::tuple<std::string, info>
+
+auto alex3 = att::from_tuple(refs).make<person>();
 
 ```
 

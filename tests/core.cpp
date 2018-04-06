@@ -28,6 +28,7 @@ TEST_CASE("constexpr traits") {
     CHECK(!att::is_aggregate<float>);
     CHECK(!att::is_aggregate<void*>);
     CHECK(!att::is_aggregate<void (*) ()>);
+    CHECK(!att::is_aggregate<const char[13]>);
     CHECK(!att::is_aggregate<schrodinger>);
     CHECK(!att::is_aggregate<wrapper>);
 
