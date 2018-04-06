@@ -5,13 +5,38 @@
 #pragma once
 
 #include <loops.hpp>
-#include <iostream>
+#include <iosfwd>
 
 namespace att {
 
     /// The std::ostream '<<' operator. In 'impl_ios' to avoid namespace conflit with 'impl::is_detected' inside.
 
     namespace impl_ios {
+
+        /// Functions used to forward the standard stream operations.
+        /// Used in this file for std::ostream << char char[N] and std::istream >> char.
+
+        template <class OStream, class T>
+        void fwd_serialize(OStream& stream, T const& data) {
+            stream << data;
+        }
+        template <class IStream, class T>
+        void fwd_deserialize(IStream& stream, T& data) {
+            stream >> data;
+        }
+
+        namespace fwd {
+            template <class OStream, class T>
+            OStream& operator<<(OStream& stream, T const& data) {
+                fwd_serialize(stream, data);
+                return stream;
+            }
+            template <class IStream, class T>
+            IStream& operator>>(IStream& stream, T& data) {
+                fwd_deserialize(stream, data);
+                return stream;
+            }
+        }
 
         /// The expression which sees if T is serializable to an std::ostream.
 
@@ -27,6 +52,7 @@ namespace att {
 
         template <class...Ts, size_t...Is>
         void serialize_tuple(std::ostream& stream, std::tuple<Ts...>& tuple, std::index_sequence<Is...>) {
+            using namespace fwd;
             (((stream << " , "), (serialize(stream, std::get<Is + 1>(tuple)))), ...);
         }
         template <class...Ts>
@@ -54,6 +80,7 @@ namespace att {
                 stream << data;
             }
             else { // T is aggregate
+                using namespace fwd;
                 auto tuple = as_tuple(data);
                 stream << "{ ";
                 serialize_tuple(stream, tuple);
@@ -111,6 +138,7 @@ namespace att {
         template <class...Ts, size_t...Is>
         void deserialize_tuple(std::istream& stream, std::tuple<Ts...>& tuple, std::index_sequence<Is...>) {
             char token;
+            using namespace fwd;
             (((stream >> token),
               (deserialize(stream, std::get<Is + 1>(tuple)))
             ), ...);
@@ -142,6 +170,7 @@ namespace att {
             else { // T is aggregate
                 auto tuple = as_tuple(data);
                 char token;
+                using namespace fwd;
                 stream >> token;
                 deserialize_tuple(stream, tuple);
                 stream >> token;

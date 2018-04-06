@@ -10,7 +10,7 @@ std::vector<std::string> standard_headers = {
     "tuple",
     "type_traits",
     "functional",
-    "iostream" };
+    "iosfwd" };
 std::vector<std::string> att_headers = {
     "tools.hpp",
     "arity_functions.inl",
