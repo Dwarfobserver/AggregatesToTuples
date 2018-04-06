@@ -1,5 +1,6 @@
 
 /// Defines the operators '==' and '<' for aggregates in the namespace att::operators.
+/// Also defines the functor class for them.
 
 #pragma once
 
@@ -68,6 +69,16 @@ namespace att {
             return !impl::test_equality(lhs, rhs);
         }
     }
+
+    /// Equality functor. Can be used for exemple to provide the function to standard containers.
+
+    template <class T>
+    struct equality_functor {
+        constexpr bool operator()(T const& lhs, T const& rhs) const {
+            using namespace att::operators;
+            return lhs == rhs;
+        }
+    };
 
     /// Operator '<'
 
@@ -148,5 +159,15 @@ namespace att {
             return !impl::test_less(lhs, rhs);
         }
     }
+
+    /// Less functor. Can be used for exemple to provide the function to standard containers.
+
+    template <class T>
+    struct less_functor {
+        constexpr bool operator()(T const& lhs, T const& rhs) const {
+            using namespace att::operators;
+            return lhs < rhs;
+        }
+    };
 
 }

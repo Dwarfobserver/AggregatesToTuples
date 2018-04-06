@@ -1,5 +1,5 @@
 
-/// Defines the function att::hash for aggregates.
+/// Defines the function att::hash for aggregates, with it's functor att::hash_functor<T>.
 
 #pragma once
 
@@ -38,5 +38,14 @@ namespace att {
         });
         return seed;
     }
+
+    /// Hash functor. Can be used for exemple to provide the function to standard containers.
+
+    template <class T, hash_combiner_t combiner = default_hash_combiner>
+    struct hash_functor {
+        constexpr size_t operator()(T const& val) const {
+            return hash(val, combiner);
+        }
+    };
 
 }

@@ -1,7 +1,8 @@
 
 #include "catch.hpp"
 #include <hash.hpp>
-
+#include <comparisons.hpp>
+#include <unordered_set>
 
 namespace {
     struct info {
@@ -26,7 +27,19 @@ TEST_CASE("hashes") {
     bob2.i.age += 1;
     CHECK(att::hash(bob) != att::hash(bob2));
 
-    CHECK(att::hash(alice, [] (size_t seed, size_t hash) {
+    auto combiner = [] (size_t seed, size_t hash) {
         return seed + 1;
-    }) == 3);
+    };
+    CHECK(att::hash(alice, combiner) == 3);
+}
+
+TEST_CASE("hash functor") {
+    using hasher   = att::hash_functor<info>;
+    using comparer = att::equality_functor<info>;
+    std::unordered_set<info, hasher, comparer> set;
+
+    set.insert({ 1.62f, 39 });
+
+    CHECK(set.find({ 1.62f, 12 }) == set.end());
+    CHECK(set.find({ 1.62f, 39 }) != set.end());
 }

@@ -2,6 +2,7 @@
 #include "catch.hpp"
 #include <comparisons.hpp>
 #include <string>
+#include <set>
 
 namespace {
     struct person {
@@ -19,17 +20,19 @@ TEST_CASE("equality") {
     person warrior = { 1.88f, 32 };
     person support = { 1.74f, 47 };
 
-    using namespace att::operators;
+    using comparer = att::equality_functor<person>;
 
-    bool WeqW = warrior == warrior;
-    bool WneqS = warrior != support;
-    CHECK(WeqW);  // Can't check equality directly, because
-    CHECK(WneqS); // Catch internally expand the equality.
+    CHECK( comparer{}(warrior, warrior));  
+    CHECK(!comparer{}(warrior, support));
 
     team goblins   = { "goblins", warrior, support };
     team halflings = goblins;
 
-    bool GeqH = goblins == halflings;
+    using namespace att::operators;
+
+    // Can't check equality directly, because Catch internally expand
+    // the equality (without the namespace att::operators).
+    bool GeqH = goblins == halflings; 
     CHECK(GeqH);
     
     halflings.warrior.age += 1;
@@ -38,7 +41,7 @@ TEST_CASE("equality") {
     CHECK(GneqH);
 }
 
-TEST_CASE("less than") {
+TEST_CASE("less operator") {
     person warrior = { 1.88f, 32 };
     person support = { 1.74f, 47 };
 
@@ -64,3 +67,14 @@ TEST_CASE("less than") {
     bool GltH = goblins < halflings;
     CHECK(GltH);
 }
+
+TEST_CASE("less functor") {
+    using orderer = att::less_functor<person>;
+    std::set<person, orderer> set;
+
+    set.insert({ 1.62f, 39 });
+
+    CHECK(set.find({ 1.62f, 12 }) == set.end());
+    CHECK(set.find({ 1.62f, 39 }) != set.end());
+}
+

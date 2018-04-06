@@ -1148,6 +1148,16 @@ namespace att {
         }
     }
 
+    /// Equality functor. Can be used for exemple to provide the function to standard containers.
+
+    template <class T>
+    struct equality_functor {
+        constexpr bool operator()(T const& lhs, T const& rhs) const {
+            using namespace att::operators;
+            return lhs == rhs;
+        }
+    };
+
     /// Operator '<'
 
     /// Check if inferior operator is detected for a type.
@@ -1228,6 +1238,16 @@ namespace att {
         }
     }
 
+    /// Less functor. Can be used for exemple to provide the function to standard containers.
+
+    template <class T>
+    struct less_functor {
+        constexpr bool operator()(T const& lhs, T const& rhs) const {
+            using namespace att::operators;
+            return lhs < rhs;
+        }
+    };
+
 }
 /// Auto-merge of hash.hpp
 namespace att {
@@ -1262,6 +1282,15 @@ namespace att {
         });
         return seed;
     }
+
+    /// Hash functor. Can be used for exemple to provide the function to standard containers.
+
+    template <class T, hash_combiner_t combiner = default_hash_combiner>
+    struct hash_functor {
+        constexpr size_t operator()(T const& val) const {
+            return hash(val, combiner);
+        }
+    };
 
 }
 /// Auto-merge of serialization.hpp
