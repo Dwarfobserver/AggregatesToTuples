@@ -1,9 +1,7 @@
 
+[![GCC Build Status](https://travis-ci.org/Dwarfobserver/AggregatesToTuples.svg?branch=master)](https://travis-ci.org/Dwarfobserver/AggregatesToTuples) [![MSVC Build Status](https://ci.appveyor.com/api/projects/status/github/Dwarfobserver/AggregatesToTuples?svg=true)](https://ci.appveyor.com/project/Dwarfobserver/aggregatestotuples)
+
 # Aggregates to tuples
-
-[![GCC Build Status](https://travis-ci.org/Dwarfobserver/AggregatesToTuples.svg?branch=master)](https://travis-ci.org/Dwarfobserver/AggregatesToTuples)
-
-[![MSVC Build Status](https://ci.appveyor.com/api/projects/status/github/Dwarfobserver/AggregatesToTuples?svg=true)](https://ci.appveyor.com/project/Dwarfobserver/aggregatestotuples)
 
 This is a single-header library in partial C++17 which enable to treat aggregate (or record) types as tuples.
 It works for MSVC, Clang and GCC.
@@ -11,6 +9,8 @@ It has been inspired by this nice article : https://playfulprogramming.blogspot.
 
 Using tuples instead of aggregates can allow many functional programming algorithms and automatic
 properties, such as equality comparaison, serialization or hash.
+
+There is no documentation for now, tests can be used as a replacement.
 
 Overview of some features :
 
