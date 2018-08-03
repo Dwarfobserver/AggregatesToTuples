@@ -1,5 +1,5 @@
 
-[![GCC Build Status](https://travis-ci.org/Dwarfobserver/AggregatesToTuples.svg?branch=master)](https://travis-ci.org/Dwarfobserver/AggregatesToTuples) [![MSVC Build Status](https://ci.appveyor.com/api/projects/status/github/Dwarfobserver/AggregatesToTuples?svg=true)](https://ci.appveyor.com/project/Dwarfobserver/aggregatestotuples)
+[![GCC Build Status](https://travis-ci.org/Dwarfobserver/AggregatesToTuples.svg?branch=master)](https://travis-ci.org/Dwarfobserver/AggregatesToTuples) [![MSVC Build Status](https://ci.appveyor.com/api/projects/status/github/Dwarfobserver/AggregatesToTuples?svg=true)](https://ci.appveyor.com/project/Dwarfobserver/aggregatestotuples) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 # Aggregates to tuples
 
@@ -72,6 +72,7 @@ Project limitations :
 
  - The aggregate max size is limited (it can be increased with the arity_functions generator)
  - It does not support aggregates with native arrays (eg. T[N], use std::array<T, N> instead)
+ - It does not support aggregates with base classes (they are detected as aggregates but can't be destructured)
 
 Note : std::is_aggregate<T> is not used because it is not implemented in MSVC (and not Clang from what I saw), but it would
 avoid some types detection caveats and greatly reduce compile time.
